@@ -191,14 +191,14 @@ def export_all(client, job, tasks, jobs, label):
             path, r = _work(t)
             results[path] = r
             progress(client, label, i, len(tasks))
-        return results
-    import multiprocessing
+    else:
+        import multiprocessing
 
-    ctx = multiprocessing.get_context("spawn")
-    with ctx.Pool(jobs, initializer=_init, initargs=(job,)) as pool:
-        for i, (path, r) in enumerate(pool.imap_unordered(_work, tasks, chunksize=4), 1):
-            results[path] = r
-            progress(client, label, i, len(tasks))
+        ctx = multiprocessing.get_context("spawn")
+        with ctx.Pool(jobs, initializer=_init, initargs=(job,)) as pool:
+            for i, (path, r) in enumerate(pool.imap_unordered(_work, tasks, chunksize=4), 1):
+                results[path] = r
+                progress(client, label, i, len(tasks))
     for path, r in sorted(results.items()):
         if "error" in r:
             print(f"  warning: {path}: {r['error']}", file=sys.stderr)
