@@ -44,7 +44,7 @@ Every sub-pack has a `manifest.json` with these fields, followed by the sub-pack
 | `created` | when, UTC, ISO 8601 |
 | `stage` | the stage that wrote it (`areas` and `base` both write `base/`) |
 | `sources` | `{archive: sha256}` of every client archive read, including the ones read only because something pointed into them |
-| `fingerprint` | SHA-256 over `sources` (each `"<archive>\t<sha256>\n"`, sorted by name). It changes exactly when the input changes, so a reader can tell whether what it derived from a pack (renders, caches) is still current |
+| `fingerprint` | SHA-256 over `sources` and the exporter (`format_version`, ff-unpack's version, UnityPackFF's commit or version). It is the same whenever the same client files are unpacked by the same tools, and changes when either changes, so **this is what a reader compares** to tell whether what it derived from a pack (renders, caches) is still current. Don't hash `manifest.json` itself: `created` changes on every run |
 
 ## base/
 
@@ -216,3 +216,5 @@ Everything in `.glb` files is UnityPackFF's glTF export; its README describes it
 | `format_version` | ff-unpack | Changes |
 |---|---|---|
 | 1 | 0.1.0 | first version |
+
+Pending: UnityPackFF writing vertex colours (`COLOR_0`) and the additive materials' real texture (`extras.main_texture_index`) changes what the glTF files hold. When ff-unpack is built on a UnityPackFF with them, `format_version` becomes 2.

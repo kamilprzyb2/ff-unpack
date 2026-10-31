@@ -19,6 +19,11 @@ def test_fingerprint_ignores_order():
     b = fingerprint({"B.resourceFile": "2" * 64, "A.resourceFile": "1" * 64})
     assert a == b and len(a) == 64
     assert a != fingerprint({"A.resourceFile": "1" * 64, "B.resourceFile": "3" * 64})
+    # a new exporter makes a new fingerprint
+    tools = {"ff_unpack": "0.1.0", "unitypackff": "d12db91"}
+    assert fingerprint({"A.resourceFile": "1" * 64}, tools) != fingerprint({"A.resourceFile": "1" * 64})
+    assert fingerprint({"A.resourceFile": "1" * 64}, tools) != fingerprint({"A.resourceFile": "1" * 64},
+                                                                         dict(tools, unitypackff="5769885"))
 
 
 def test_staging_swaps_in_whole(tmp_path):
@@ -36,11 +41,15 @@ def test_staging_swaps_in_whole(tmp_path):
     assert m["format_version"] == 1
     assert m["build"] == {"protocol": 104, "name": "beta-20100104", "uuid": build.manifest["uuid"]}
     assert m["sources"] == {"TableData.resourceFile": "ab" * 32}
-    assert m["fingerprint"] == fingerprint(m["sources"])
+    assert len(m["fingerprint"]) == 64
     assert m["areas"] == 1
     assert (final / "areas.json").read_text() == "[]"
     # only the pack is left: no work directories
     assert os.listdir(tmp_path / "beta-20100104") == ["base"]
+    # made again from the same input with the same tools: the same
+    with Staging(tmp_path, build, "base") as s:
+        s.sources = {"TableData.resourceFile": "ab" * 32}
+    assert json.loads((final / "manifest.json").read_text())["fingerprint"] == m["fingerprint"]
 
 
 def test_staging_keeps_the_old_pack_on_failure(tmp_path):

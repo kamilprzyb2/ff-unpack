@@ -23,11 +23,15 @@ def safe(name):
     return re.sub(r"[^a-z0-9_.@+-]+", "_", name.lower())
 
 
-def fingerprint(sources):
-    """One SHA-256 over the sources ({archive: sha256})."""
+def fingerprint(sources, tools=None):
+    """One SHA-256 over the sources ({archive: sha256}) and what exported
+    them (tools: {name: version}): the same for the same input and the same
+    exporter, whenever the pack was made."""
     h = hashlib.sha256()
     for name in sorted(sources):
         h.update(f"{name}\t{sources[name]}\n".encode())
+    for name in sorted(tools or {}):
+        h.update(f"tool\t{name}\t{tools[name]}\n".encode())
     return h.hexdigest()
 
 
@@ -89,15 +93,21 @@ class Staging:
         return os.path.join(self.dir, *parts)
 
     def header(self):
+        upff = unitypackff_version()
+        tools = {
+            "format_version": FORMAT_VERSION,
+            "ff_unpack": __version__,
+            "unitypackff": upff.get("commit") or upff.get("version"),
+        }
         return {
             "format": f"ff-unpack/{self.subpack}",
             "format_version": FORMAT_VERSION,
             "build": self.build.as_json(),
             "ff_unpack": __version__,
-            "unitypackff": unitypackff_version(),
+            "unitypackff": upff,
             "created": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "sources": dict(sorted(self.sources.items())),
-            "fingerprint": fingerprint(self.sources),
+            "fingerprint": fingerprint(self.sources, tools),
         }
 
     def __exit__(self, kind, value, tb):
