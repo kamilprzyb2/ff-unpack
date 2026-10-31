@@ -2,9 +2,9 @@
 
 Unpacks the FusionFall game client into packs: plain files in a documented layout ([PACK_FORMAT.md](PACK_FORMAT.md)) that a server's website, a model viewer or a renderer can read without knowing anything about Unity.
 
-It downloads the client's archives for one build from the CDN its launcher manifest names, checks every file against the manifest's SHA-256, and unpacks them with [UnityPackFF](https://github.com/kamilprzyb2/UnityPackFF). Models and map tiles come out as glTF, images as PNG, sounds as Ogg Vorbis, tables as JSON.
+It downloads the client's archives for one build, checks every file against a pinned SHA-256, and unpacks them with [UnityPackFF](https://github.com/kamilprzyb2/UnityPackFF). Models and map tiles come out as glTF, images as PNG, sounds as Ogg Vorbis, tables as JSON.
 
-ff-unpack only extracts. It doesn't render anything or draw any images, and it never ships a pack: you make your own from the client, on your machine. The packs are FusionFall's art, sound and data: don't commit or publish them.
+ff-unpack only extracts. It doesn't render anything or draw any images, and it never ships a pack: you make your own from the client, on your machine.
 
 ## Install
 
@@ -34,7 +34,7 @@ This writes `packs/beta-20100104/base/`, `packs/beta-20100104/avatar/` and so on
 | `media` | `media/` | voice lines, story and hint clips, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
 | `world` | `world/` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
 
-Stages share archives, so all six together download the whole build once (about 0.5 GB). A server that shows no game content still needs the areas to name where players are: run `areas` alone. It reads only TableData.
+Stages share archives, so all six together download the whole build once (about 0.5 GB). `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
 
 Options:
 
@@ -42,9 +42,13 @@ Options:
 - `--tiles XX_YY,...`: stage `world` unpacks only these tiles, to try a change on one area. The manifest lists only them and says `partial`; ff-unpack refuses to write such a pack over a whole one, so point it at another directory.
 - `--jobs N`: processes for the stages that export many models or tiles (`avatar`, `models`, `world`; default 2). Each world tile process can take over a gigabyte of memory.
 
-Each sub-pack is written beside its final place and swapped in when it's complete, so a server reading the packs never sees half of one, and a failed run leaves the old pack in place. Each has a `manifest.json` that says what's in it, which client archives it came from (`sources`, with their hashes) and a `fingerprint` that changes exactly when those do.
+Each sub-pack is written beside its final place and swapped in when it's complete, so a program reading the packs never sees half of one, and a failed run leaves the old pack in place. Each has a `manifest.json` that says what's in it, which client archives it came from (`sources`, with their hashes) and a `fingerprint` that changes exactly when those, or the versions of ff-unpack and UnityPackFF that made it, do.
 
 `areas`, `base` and `media` take seconds. `avatar` and `models` export thousands of glTF files and `world` every map tile, which takes by far the longest; `--jobs` spreads those three over processes.
+
+### Where the files come from
+
+ff-unpack ships the launcher manifests of the three builds (`ff_unpack/manifests/`, copied unchanged from [OpenFusionLauncher](https://github.com/OpenFusionProject/OpenFusionLauncher)'s `resources/defaults/versions/`). Each one gives the build's download address (`http://cdn.dexlabs.systems/ff/big/<build>/`, the CDN the launcher itself uses) and every archive's name, size and SHA-256, and the SHA-256 of every file inside it (except `main.unity3d`'s, which the manifests don't list). `--build` picks the manifest, so nothing else needs configuring. An archive whose hash doesn't match is rejected, not unpacked.
 
 ## Develop
 

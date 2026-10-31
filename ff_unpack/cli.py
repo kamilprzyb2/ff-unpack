@@ -20,9 +20,6 @@ Stages:
           character select backdrops, guide pictures
   world   world/: every map tile, attribute grids, skyboxes, music zones
           and tracks
-
-What is unpacked is FusionFall's art and sound: keep it out of version
-control and don't publish it.
 """
 
 import argparse

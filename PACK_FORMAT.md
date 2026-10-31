@@ -2,8 +2,6 @@
 
 The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; once ff-unpack is published, it bumps `format_version` whenever the layout or the exported data changes. Until then, version 1 is still being worked out and changes in place (see "Versions").
 
-Packs hold FusionFall's art, sound and data, unpacked by the user from their own client files. Don't commit or publish them.
-
 ## Layout
 
 ```
