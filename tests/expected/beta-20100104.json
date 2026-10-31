@@ -1,0 +1,116 @@
+{
+ "areas": {
+  "areas": 93
+ },
+ "avatar": {
+  "actor_clips": {
+   "m": 230,
+   "w": 228
+  },
+  "emotes": 16,
+  "hnpc": 138,
+  "left_out": 371,
+  "missing_textures": 3,
+  "palettes": [
+   20,
+   20
+  ],
+  "tables": [
+   "m_pAnimationTable",
+   "m_pAvatarTable",
+   "m_pBackItemTable",
+   "m_pEmoteTable",
+   "m_pFaceItemTable",
+   "m_pGlassItemTable",
+   "m_pHatItemTable",
+   "m_pHeadItemTable",
+   "m_pNpcTable",
+   "m_pPantsItemTable",
+   "m_pShirtsItemTable",
+   "m_pShoesItemTable",
+   "m_pVehicleItemTable",
+   "m_pWeaponItemTable"
+  ],
+  "textures": 1790,
+  "unbound": 0,
+  "wear": 1120,
+  "wear_variants": 3185,
+  "wear_with_clips": 43
+ },
+ "base": {
+  "areas": 93,
+  "icon_families": [
+   "cosicon",
+   "generalitemicon",
+   "hnpcicon",
+   "mobicon",
+   "nanoicon",
+   "nanoready",
+   "npcicon",
+   "rule_combine",
+   "rule_vehicle",
+   "skillicon",
+   "transport",
+   "vehicle",
+   "wpnicon"
+  ],
+  "icons": 2681
+ },
+ "media": {
+  "backdrops": [
+   "darklands",
+   "downtown",
+   "future",
+   "suburbs",
+   "wilds"
+  ],
+  "dismiss": 114,
+  "ep": [
+   32,
+   32
+  ],
+  "help": 91,
+  "hints": 74,
+  "nano_clips": 2222,
+  "nano_event_lines": 2101,
+  "nanos_with_events": 39,
+  "speakers": 342,
+  "story": 154,
+  "voices": 2017
+ },
+ "models": {
+  "clips": 4821,
+  "missing_textures": 9,
+  "mob": 274,
+  "nano": 44,
+  "textures": 336,
+  "variants": 327
+ },
+ "world": {
+  "ambient": 116,
+  "heal": 5,
+  "light": {
+   "color": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "direction": [
+    0.893701,
+    0.309017,
+    0.32528
+   ],
+   "intensity": 1.0
+  },
+  "music": 115,
+  "poison": 96,
+  "skipped": 32,
+  "sky": [
+   "fusion",
+   "normal"
+  ],
+  "terrain": 170,
+  "tiles": 170,
+  "tracks": 80
+ }
+}
