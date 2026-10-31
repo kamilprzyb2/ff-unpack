@@ -88,6 +88,23 @@
  },
  "world": {
   "ambient": 126,
+  "effects": [
+   "blackhole",
+   "epbarrier1",
+   "guidechanger",
+   "healing_symbol",
+   "jump_zt1c",
+   "neededjump_nano",
+   "poison_symbol",
+   "roket_symbol",
+   "sb_sbkn_tower_hologram",
+   "x_com_gg"
+  ],
+  "effects_with_copies": [
+   "blackhole",
+   "epbarrier1",
+   "x_com_gg"
+  ],
   "heal": 5,
   "light": {
    "color": [

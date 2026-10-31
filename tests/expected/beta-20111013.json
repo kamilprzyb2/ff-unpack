@@ -88,6 +88,25 @@
  },
  "world": {
   "ambient": 144,
+  "effects": [
+   "blackhole",
+   "epbarrier1",
+   "guidechanger",
+   "healing_symbol",
+   "neededjump_nano",
+   "needset",
+   "needset_up",
+   "patrol_elena7",
+   "poison_symbol",
+   "roket_symbol",
+   "sb_sbkn_tower_hologram",
+   "stun_target_e01",
+   "tutorial_dexterhologram",
+   "weapon_fluid_0",
+   "weapon_fluid_up",
+   "x_com_gg"
+  ],
+  "effects_with_copies": [],
   "heal": 4,
   "light": {
    "color": [
