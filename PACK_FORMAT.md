@@ -40,7 +40,7 @@ Every sub-pack has a `manifest.json` with these fields, followed by the sub-pack
 | `format_version` | `1` |
 | `build` | `{"protocol": 104, "name": "beta-20100104", "uuid": "<launcher manifest uuid>"}` |
 | `ff_unpack` | ff-unpack's version |
-| `unitypackff` | `{"version", "commit"}` of the UnityPackFF that exported it (`commit` only when run from a checkout) |
+| `unitypackff` | `{"version", "commit", "dirty"}` of the UnityPackFF that exported it: `commit` only when it ran from a git checkout, `dirty: true` when that checkout had uncommitted changes (then the pack is not reproducible from the commit) |
 | `created` | when, UTC, ISO 8601 |
 | `stage` | the stage that wrote it (`areas` and `base` both write `base/`) |
 | `sources` | `{archive: sha256}` of every client archive read, including the ones read only because something pointed into them |

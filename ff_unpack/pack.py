@@ -47,6 +47,13 @@ def unitypackff_version():
         commit = ""
     if commit:
         version["commit"] = commit
+        # a checkout with uncommitted changes isn't that commit
+        dirty = subprocess.run(
+            ["git", "-C", folder, "status", "--porcelain", "--untracked-files=no"],
+            capture_output=True, text=True, timeout=30,
+        ).stdout.strip()
+        if dirty:
+            version["dirty"] = True
     return version
 
 
@@ -97,7 +104,7 @@ class Staging:
         tools = {
             "format_version": FORMAT_VERSION,
             "ff_unpack": __version__,
-            "unitypackff": upff.get("commit") or upff.get("version"),
+            "unitypackff": (upff.get("commit") or upff.get("version")) + ("+dirty" if upff.get("dirty") else ""),
         }
         return {
             "format": f"ff-unpack/{self.subpack}",
