@@ -16,7 +16,7 @@ The contract between ff-unpack and everything that reads its output. A reader st
   beta-20111013/        protocol 1013
 ```
 
-A reader picks the build directory by the server's protocol: 104 → `beta-20100104`, 728 → `beta-20100728`, 1013 → `beta-20111013`. Each sub-pack is optional and stands alone. ff-unpack writes a sub-pack next to its final place and renames it into place in one step, so a reader sees the old pack or the new one, never half of one.
+Each build directory is named after its client build, and the protocol version maps to it: 104 → `beta-20100104`, 728 → `beta-20100728`, 1013 → `beta-20111013`. Each sub-pack is optional and stands alone. ff-unpack writes a sub-pack next to its final place and renames it into place in one step, so a reader sees the old pack or the new one, never half of one.
 
 ## Conventions
 
@@ -26,7 +26,7 @@ A reader picks the build directory by the server's protocol: 104 → `beta-20100
 - **Audio** is Ogg Vorbis, copied byte for byte. Every `.wav` and `.mp3` in the client is an Ogg Vorbis file inside.
 - **glTF** files are binary glTF 2.0 (`.glb`), written by UnityPackFF (see "glTF" below).
 - **Shared files.** `avatar/`, `models/` and `world/` each have a `shared/` folder. It holds the images (`.png`) and mesh data (`.bin`) that their `.glb` files refer to by relative URI. Each file is named by the first 16 hex digits of the SHA-256 of its content, so a texture or mesh that many models use is stored once.
-- **World coordinates.** Unity is left-handed and glTF is right-handed, so UnityPackFF mirrors everything along x: a Unity position `(x, y, z)` is `(-x, y, z)` in glTF. Units are metres (Unity units). The server's world coordinates are centimetres: server `(X, Y, Z)` is Unity `(X / 100, Z / 100, Y / 100)`.
+- **World coordinates.** Unity is left-handed and glTF is right-handed, so UnityPackFF mirrors everything along x: a Unity position `(x, y, z)` is `(-x, y, z)` in glTF. Units are metres (Unity units). The game's network protocol uses centimetres: its `(X, Y, Z)` is Unity `(X / 100, Z / 100, Y / 100)`.
 
 ## Manifests
 
@@ -117,7 +117,7 @@ The manifest lists them: `actors: {"m": prefab, "w": prefab}` and `wear: {model:
 
 **`hnpc.json`**: the rows of `all_hnpc.asset` (`TableElement`) as they are: `iType`, `strHairMesh`, `strHairTexture`, …, `iHeight`, `iShape`, `iSkinColor`, `iHairColor`. Mesh and texture names are the client's (`f_head_014_type01.nif`, `f_head_014_a.dds`). NPC rows refer to them by `m_iHNpcNum`.
 
-**`tables.json`**: `{table: {list: rows}}` from the client's XDT: the item tables' `m_pItemData` and `m_pItemMeshData` (shirts, pants, shoes, hats, glasses, back items, weapons, vehicles, faces, hair), `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`), `m_pAvatarTable`, `m_pAnimationTable.m_pAvatarData` and `m_pEmoteTable`. These are the client's tables, which a server's own XDT may differ from.
+**`tables.json`**: `{table: {list: rows}}` from the client's XDT: the item tables' `m_pItemData` and `m_pItemMeshData` (shirts, pants, shoes, hats, glasses, back items, weapons, vehicles, faces, hair), `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`), `m_pAvatarTable`, `m_pAnimationTable.m_pAvatarData` and `m_pEmoteTable`. These are the client's own tables.
 
 **`emote/`**: the chat menu's emote icons (`angryicon.png`, …).
 
@@ -199,7 +199,7 @@ Manifest `partial`: `true` when ff-unpack was asked for only some tiles (`--tile
 
 **`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its clips (they loop) and scripts; the emitter's node places it. `<name>` is the prefab's name in lower case, and an emitter's `nifObject.object` gives it. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path or null}}`. `path` is null when no container lists the prefab (it sits in a tile's own data). When tiles hold copies of a prefab that differ, the first tile's (by name) is kept and the entry gets `"copies": n`: in 728 every tile has its own copy, compressed on its own, whose normals and texture coordinates differ slightly. The effects' particle systems aren't exported.
 
-**`attr/<XX_YY>.bin`**: the tile's `MapAttributeTable`, 129 × 129 bytes, one per heightmap vertex (4 m apart), stored x-major: byte `x + z × 129`, with x east and z north from the tile's south-west corner. Flags: 8 = poison (standing there hurts), 16 = heal (the server ignores it), 1 and 4 gate some items, values from 64 up mark roads and pavements. Poison overlays are drawn from this by whoever shows them.
+**`attr/<XX_YY>.bin`**: the tile's `MapAttributeTable`, 129 × 129 bytes, one per heightmap vertex (4 m apart), stored x-major: byte `x + z × 129`, with x east and z north from the tile's south-west corner. Flags: 8 = poison (standing there hurts), 16 = heal, 1 and 4 gate some items, values from 64 up mark roads and pavements. Poison overlays are drawn from this by whoever shows them.
 
 **`sky/<set>/`**: the two skyboxes' six faces (`front`, `back`, `left`, `right`, `up`, `down`), RenderFX/Skybox: set `normal` (`Skybox.mat`) and set `fusion` (`Skybox_FreeZone.mat`). Manifest `sky`: `{"sets": ["fusion", "normal"], "fusion_rects": [[x, y, width, height], ...]}`: the client shows the fusion sky inside these map rectangles (metres, as in `areas.json`: the Future and the tutorial square), the normal one elsewhere (`cnPlayerCamera`).
 

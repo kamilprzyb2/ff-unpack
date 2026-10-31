@@ -60,7 +60,7 @@ def main(argv=None):
     p.add_argument("out", nargs="?", help="where the packs go (OUT/<build>/<sub-pack>/)")
     p.add_argument("stages", nargs="*", help="stages to run: " + ", ".join(STAGES))
     p.add_argument("--build", type=int, choices=sorted(BUILDS), default=104,
-                   help="the server protocol whose client to unpack (default: 104)")
+                   help="protocol version of the client build to unpack (default: 104)")
     p.add_argument("--cache", default=None, help=f"where downloaded archives are kept (default: {default_cache()})")
     p.add_argument("--jobs", type=int, default=2, help="processes for the stages that use several (default: 2)")
     p.add_argument("--tiles", default=None, metavar="XX_YY,...",

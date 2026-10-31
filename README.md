@@ -1,6 +1,6 @@
 # ff-unpack
 
-Unpacks the FusionFall game client into packs: plain files in a documented layout ([PACK_FORMAT.md](PACK_FORMAT.md)) that a server's website, a model viewer or a renderer can read without knowing anything about Unity.
+Unpacks the FusionFall game client into packs: plain files in a documented layout ([PACK_FORMAT.md](PACK_FORMAT.md)) that a website, a model viewer or a renderer can read without knowing anything about Unity.
 
 It downloads the client's archives for one build, checks every file against a pinned SHA-256, and unpacks them with [UnityPackFF](https://github.com/kamilprzyb2/UnityPackFF). Models and map tiles come out as glTF, images as PNG, sounds as Ogg Vorbis, tables as JSON.
 
@@ -23,7 +23,7 @@ ff-unpack packs --build 104 base avatar models media world
 ff-unpack packs --build 1013 areas
 ```
 
-This writes `packs/beta-20100104/base/`, `packs/beta-20100104/avatar/` and so on: one directory per build, one sub-pack per stage. `--build` takes the server's protocol: 104 (beta-20100104, "Original"), 728 (beta-20100728) or 1013 (beta-20111013, "Academy").
+This writes `packs/beta-20100104/base/`, `packs/beta-20100104/avatar/` and so on: one directory per build, one sub-pack per stage. `--build` takes the protocol version: 104 (beta-20100104, "Original"), 728 (beta-20100728) or 1013 (beta-20111013, "Academy").
 
 | Stage | Writes | What | Downloads (104 / 728 / 1013) |
 |---|---|---|---|

@@ -1,16 +1,16 @@
 """The client builds ff-unpack knows, each pinned by its launcher manifest.
 
 A launcher manifest (as OpenFusionLauncher ships them in
-resources/defaults/versions/, and ofapi serves them at /versions/<uuid>.json)
-lists every archive of a build with its URL and SHA-256, and the SHA-256 of
-every file inside it (main.unity3d excepted). The three in manifests/ are
-copied unchanged from OpenFusionLauncher.
+resources/defaults/versions/) lists every archive of a build with its URL
+and SHA-256, and the SHA-256 of every file inside it (main.unity3d
+excepted). The three in manifests/ are copied unchanged from
+OpenFusionLauncher.
 """
 
 import json
 from importlib import resources
 
-# server protocol -> client build
+# protocol version -> client build
 BUILDS = {104: "beta-20100104", 728: "beta-20100728", 1013: "beta-20111013"}
 MAIN_FILE = "main.unity3d"
 
