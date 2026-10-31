@@ -48,9 +48,13 @@ def preferred(archives):
     return sorted(archives, key=lambda a: (not a.startswith("CharacterSelection"), a))
 
 
+def is_prefab(e):
+    return e.class_id in PREFABS and bool(ACTOR.match(e.path) or WEAR.match(e.path))
+
+
 def seed(e):
     return (
-        (e.class_id in PREFABS and (ACTOR.match(e.path) or WEAR.match(e.path)))
+        is_prefab(e)
         # the nano archives hold only nanos' skins, never worn
         or (is_texture(e) and "nano" not in e.archive.lower())
         or (EMOTE.search(e.path) and e.class_id == TEXTURE_2D)
@@ -104,9 +108,8 @@ class Avatar:
         table = xdt(client)
         hnpc = hnpc_rows(client)
 
-        entries = find(client, archives, lambda e: e.class_id in PREFABS and (ACTOR.match(e.path) or WEAR.match(e.path)))
         tasks = []
-        for e in entries:
+        for e in find(client, archives, is_prefab):
             m = ACTOR.match(e.path)
             tasks.append((e, f"actor/{m.group(1)}" if m else f"wear/{safe(WEAR.match(e.path).group(1))}"))
         job = Job(client.build.protocol, client.cache, archives, staging.path("shared"), staging.dir,

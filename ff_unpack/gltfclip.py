@@ -4,7 +4,8 @@ UnityPackFF samples every curve of a clip at the clip's rate, so a bone that
 never moves still gets a keyframe per frame. More than half the tracks of
 the client's clips are like that. A glTF sampler with one keyframe holds
 that value for the whole clip, so such a track is cut to its first
-keyframe: the same animation, about 45% fewer bytes."""
+keyframe: the same animation, in about a quarter fewer bytes (104's
+creature clips: 417 MB before, 309 MB after)."""
 
 import struct
 

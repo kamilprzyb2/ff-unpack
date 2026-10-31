@@ -223,7 +223,8 @@ class Client:
                                 obj = self.asset(target).objects.get(ptr.path_id)
                             except KeyError:
                                 obj = None
-                        out.append(Entry(archive, name, path.lower(), target, ptr.path_id, obj.type_id if obj else None))
+                        class_id = obj.type_id if obj else None
+                        out.append(Entry(archive, name, path.lower(), target, ptr.path_id, class_id))
             finally:
                 root.setLevel(level)
             self._entries[archive] = out

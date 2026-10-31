@@ -120,14 +120,6 @@ def progress(client, label, done, total):
         print(f"  {label} {done}/{total}", file=sys.stderr, flush=True)
 
 
-def jobs_pool(jobs):
-    """A process pool for the stages that spread work over processes; each
-    worker opens the cache on its own."""
-    import multiprocessing
-
-    return multiprocessing.get_context("spawn").Pool(max(1, jobs), maxtasksperchild=8)
-
-
 def write_bytes(path, data):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = f"{path}.{os.getpid()}.tmp"
