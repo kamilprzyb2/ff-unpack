@@ -90,12 +90,19 @@ avatar/
 - `<variant>.glb`: the model, once per set of textures the XDT puts on it. The variant is named by the set's first texture (`m_face_001_a`), or by both joined with `+` when that isn't enough to tell them apart. A prefab the XDT names no textures for has just `default.glb`, with its own.
 - `clips/<clip>.glb`: each clip on its own, with the same nodes in the same order as the model and no meshes, so it plays on any variant (match by node index). A track that never moves has one keyframe.
 
-The manifest lists them: `actors: {"m": prefab, "w": prefab}` and `wear: {model: prefab}`, where a prefab is
+The manifest lists them: `actors: {"m": prefab, "w": prefab}` and `wear: {model: prefab}`, where a prefab is, for example
+
+```json
+{"source": "CharacterSelection.resourceFile",
+ "variants": {"default": {"file": "actor/m/default.glb"}},
+ "clips": {"run": "actor/m/clips/run.glb", "stand1": "actor/m/clips/stand1.glb"}}
+```
+
+or, for a worn item the XDT gives textures,
 
 ```json
 {"source": "CharacterSelection.resourceFile",
  "variants": {"m_head_001_a": {"file": "wear/m_head_001_type02/m_head_001_a.glb", "textures": ["m_head_001_a", null]}},
- "clips": {"run": "actor/m/clips/run.glb"},
  "left_out": 53,
  "warnings": ["..."]}
 ```

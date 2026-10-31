@@ -34,7 +34,7 @@ This writes `packs/beta-20100104/base/`, `packs/beta-20100104/avatar/` and so on
 | `media` | `media/` | voice lines, story and hint clips, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
 | `world` | `world/` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
 
-Stages share archives, so all six together download the whole build once (about 0.5 GB). `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
+Stages share archives, so all six together download each archive once: 473 / 967 / 702 MB in all. `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
 
 Options:
 

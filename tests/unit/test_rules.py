@@ -98,8 +98,7 @@ def test_named_textures():
 
 
 def test_light_direction():
-    # main.unity3d's "Directional light" in all three builds; the prototype
-    # renderer's constant
+    # main.unity3d's "Directional light", the same in all three builds
     q = [0.19106532633304596, -0.7912864685058594, 0.31334972381591797, -0.4890519082546234]
     d = toward_light(q)
     assert [round(c, 4) for c in d] == [0.8937, 0.309, 0.3253]
