@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.2"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,9 @@ name = "ff-unpack"
 dynamic = ["version"]
 description = "Unpacks the FusionFall game client into documented packs"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "ff_unpack/manifests/LICENSE"]
+authors = [{name = "Kamil Przybylski"}]
 requires-python = ">=3.10"
 dependencies = [
     "unitypack @ git+https://github.com/kamilprzyb2/UnityPackFF@master",
@@ -15,6 +18,9 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/kamilprzyb2/ff-unpack"
 
 [project.scripts]
 ff-unpack = "ff_unpack.cli:main"
@@ -26,7 +32,7 @@ version = {attr = "ff_unpack.__version__"}
 find = {include = ["ff_unpack", "ff_unpack.*"]}
 
 [tool.setuptools.package-data]
-ff_unpack = ["archives.json", "manifests/*.json"]
+ff_unpack = ["archives.json", "manifests/*.json", "manifests/LICENSE"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,6 +1,6 @@
 # Pack format, version 1
 
-The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; once ff-unpack is published, it bumps `format_version` whenever the layout or the exported data changes. Until then, version 1 is still being worked out and changes in place (see "Versions").
+The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; ff-unpack bumps `format_version` whenever the layout or the exported data changes.
 
 ## Layout
 
@@ -227,5 +227,3 @@ Everything in `.glb` files is UnityPackFF's glTF export; its README describes it
 | `format_version` | ff-unpack | Changes |
 |---|---|---|
 | 1 | 0.1.0 | first version |
-
-Version 1 changes in place until ff-unpack is first published: rebuild packs with the current ff-unpack rather than relying on what an older one wrote. Since the first draft it has gained, among other things, vertex colours (`COLOR_0`) and additive materials' real texture (`extras.main_texture_index`) from UnityPackFF, the tiles' scripts, `effect/` and the manifest's `partial`.

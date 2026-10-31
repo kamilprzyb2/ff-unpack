@@ -2,7 +2,7 @@
 
 Unpacks the FusionFall game client into packs: plain files in a documented layout ([PACK_FORMAT.md](PACK_FORMAT.md)) that a website, a model viewer or a renderer can read without knowing anything about Unity.
 
-It downloads the client's archives for one build, checks every file against a pinned SHA-256, and unpacks them with [UnityPackFF](https://github.com/kamilprzyb2/UnityPackFF). Models and map tiles come out as glTF, images as PNG, sounds as Ogg Vorbis, tables as JSON.
+It downloads the client's archives for one build, checks every file against a pinned SHA-256, and unpacks them with [UnityPackFF](https://github.com/kamilprzyb2/UnityPackFF) (my fork of [dongresource/UnityPackFF](https://github.com/dongresource/UnityPackFF)). Models and map tiles come out as glTF, images as PNG, sounds as Ogg Vorbis, tables as JSON.
 
 ff-unpack only extracts. It doesn't render anything or draw any images, and it never ships a pack: you make your own from the client, on your machine.
 
@@ -14,7 +14,7 @@ Python 3.10 or newer.
 pip install 'ff-unpack @ git+https://github.com/kamilprzyb2/ff-unpack'
 ```
 
-or, from a checkout, `pip install -e '.[test]'`. UnityPackFF comes from its fork's `master`.
+or, from a checkout, `pip install -e '.[test]'`. UnityPackFF comes from my fork's `master`.
 
 ## Use
 
@@ -74,3 +74,7 @@ The integration tests download what they need into the cache (`FF_UNPACK_CACHE`,
 ### What goes where
 
 UnityPackFF decodes what's in the client's files and exports it as glTF. ff-unpack applies FusionFall's rules (which prefab is worn, which textures the XDT puts on it, where the client keeps what) and lays out the packs. A decoding problem is fixed in UnityPackFF.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The launcher manifests in `ff_unpack/manifests/` are OpenFusionLauncher's, under its MIT license ([ff_unpack/manifests/LICENSE](ff_unpack/manifests/LICENSE)).
