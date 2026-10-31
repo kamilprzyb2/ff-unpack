@@ -17,4 +17,5 @@ def load():
 def seeds(build, stage):
     """The archives the stage reads for the build, before what they point into."""
     plan = load().get(build.name, {})
-    return sorted(set(stage.fixed) | set(plan.get(stage.name, [])))
+    named = stage.archives(build) if hasattr(stage, "archives") else []
+    return sorted(set(stage.fixed) | set(named) | set(plan.get(stage.name, [])))

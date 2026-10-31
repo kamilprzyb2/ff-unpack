@@ -19,8 +19,8 @@ FORMAT_VERSION = 1
 
 def safe(name):
     """A client name as a file name: lowercase, anything but letters, digits,
-    `_`, `.`, `-` and `@` as `_`."""
-    return re.sub(r"[^a-z0-9_.@-]+", "_", name.lower())
+    `_`, `.`, `-`, `@` and `+` as `_`."""
+    return re.sub(r"[^a-z0-9_.@+-]+", "_", name.lower())
 
 
 def fingerprint(sources):

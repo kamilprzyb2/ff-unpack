@@ -34,19 +34,19 @@ def find(client, archives, match):
     return out
 
 
-def needed(client, archives):
+def needed(client, archives, jobs=4):
     """The archives, plus every archive their files point into, and so on:
-    what must be unpacked for pointers to resolve."""
-    todo, done = list(archives), []
+    what must be unpacked for pointers to resolve. Fetches them all."""
+    done, todo = set(), sorted(set(archives))
     while todo:
-        a = todo.pop(0)
-        if a in done:
-            continue
-        done.append(a)
-        client.fetch([a])
-        for f in client.files(a):
-            todo += sorted(client.externals(f) - set(done))
-    return done
+        client.fetch(todo, jobs)
+        done.update(todo)
+        pointed = set()
+        for a in todo:
+            for f in client.files(a):
+                pointed |= client.externals(f)
+        todo = sorted(pointed - done)
+    return sorted(done)
 
 
 def png(image):
@@ -95,6 +95,17 @@ def xdt(client):
     """TableData's XDT (xdtdatas.asset), read."""
     entry = next(e for e in client.entries(TABLEDATA) if e.path == "xdtdatas.asset")
     return client.object(entry).read()
+
+
+def tables(table, wanted):
+    """Some of the XDT's tables, as plain JSON: {table: {list: rows}} for
+    wanted = {table: (list, ...)}."""
+    out = {}
+    for name, keys in wanted.items():
+        t = table.get(name)
+        if t is not None:
+            out[name] = {k: to_json(t[k]) for k in keys if k in t}
+    return out
 
 
 def progress(client, label, done, total):

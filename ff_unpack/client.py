@@ -20,7 +20,6 @@ from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 
 import unitypack
-from unitypack.asset import Asset
 from unitypack.environment import UnityEnvironment
 
 from . import __version__
@@ -77,7 +76,8 @@ class Client:
 
     def __init__(self, build, cache=None, quiet=False):
         self.build = build if isinstance(build, Build) else Build(build)
-        self.root = os.path.join(cache or default_cache(), self.build.name)
+        self.cache = cache or default_cache()
+        self.root = os.path.join(self.cache, self.build.name)
         self.unpacked = os.path.join(self.root, "unpacked")
         self.quiet = quiet
         self._archives = self.build.archives()

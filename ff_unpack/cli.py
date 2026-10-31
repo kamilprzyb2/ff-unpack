@@ -27,7 +27,6 @@ control and don't publish it.
 
 import argparse
 import logging
-import os
 import sys
 import time
 

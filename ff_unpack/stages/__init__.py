@@ -6,6 +6,10 @@ archives holding them are pinned per build in archives.json, see
 tools/plan_archives.py), and `run(client, staging, archives, jobs)`, which
 writes the files and the manifest's own fields and returns a summary."""
 
+from .avatar import Avatar
 from .base import Areas, Base
+from .media import Media
+from .models import Models
+from .world import World
 
-STAGES = {s.name: s for s in (Areas, Base)}
+STAGES = {s.name: s for s in (Areas, Base, Avatar, Models, Media, World)}
