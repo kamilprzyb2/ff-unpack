@@ -1,0 +1,78 @@
+{
+ "beta-20100104": {
+  "base": [
+   "FutureNano.resourceFile",
+   "Icons.resourceFile",
+   "Tutorial.resourceFile"
+  ]
+ },
+ "beta-20100728": {
+  "base": [
+   "FutureNano.resourceFile",
+   "Icons.resourceFile",
+   "Tutorial.resourceFile"
+  ]
+ },
+ "beta-20111013": {
+  "base": [
+   "Icons.resourceFile",
+   "Nano_001.resourceFile",
+   "Nano_002.resourceFile",
+   "Nano_003.resourceFile",
+   "Nano_004.resourceFile",
+   "Nano_005.resourceFile",
+   "Nano_006.resourceFile",
+   "Nano_007.resourceFile",
+   "Nano_008.resourceFile",
+   "Nano_009.resourceFile",
+   "Nano_010.resourceFile",
+   "Nano_011.resourceFile",
+   "Nano_012.resourceFile",
+   "Nano_013.resourceFile",
+   "Nano_014.resourceFile",
+   "Nano_015.resourceFile",
+   "Nano_016.resourceFile",
+   "Nano_017.resourceFile",
+   "Nano_018.resourceFile",
+   "Nano_019.resourceFile",
+   "Nano_020.resourceFile",
+   "Nano_021.resourceFile",
+   "Nano_022.resourceFile",
+   "Nano_023.resourceFile",
+   "Nano_024.resourceFile",
+   "Nano_025.resourceFile",
+   "Nano_026.resourceFile",
+   "Nano_027.resourceFile",
+   "Nano_028.resourceFile",
+   "Nano_029.resourceFile",
+   "Nano_030.resourceFile",
+   "Nano_031.resourceFile",
+   "Nano_032.resourceFile",
+   "Nano_033.resourceFile",
+   "Nano_034.resourceFile",
+   "Nano_035.resourceFile",
+   "Nano_036.resourceFile",
+   "Nano_037.resourceFile",
+   "Nano_038.resourceFile",
+   "Nano_039.resourceFile",
+   "Nano_040.resourceFile",
+   "Nano_041.resourceFile",
+   "Nano_042.resourceFile",
+   "Nano_043.resourceFile",
+   "Nano_044.resourceFile",
+   "Nano_045.resourceFile",
+   "Nano_046.resourceFile",
+   "Nano_047.resourceFile",
+   "Nano_048.resourceFile",
+   "Nano_049.resourceFile",
+   "Nano_050.resourceFile",
+   "Nano_051.resourceFile",
+   "Nano_052.resourceFile",
+   "Nano_053.resourceFile",
+   "Nano_054.resourceFile",
+   "Nano_055.resourceFile",
+   "Nano_056.resourceFile",
+   "Nano_057.resourceFile"
+  ]
+ }
+}

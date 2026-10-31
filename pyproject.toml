@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ff-unpack"
+dynamic = ["version"]
+description = "Unpacks the FusionFall game client into documented packs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "unitypack @ git+https://github.com/kamilprzyb2/UnityPackFF@master",
+    "Pillow",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+ff-unpack = "ff_unpack.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "ff_unpack.__version__"}
+
+[tool.setuptools.packages]
+find = {include = ["ff_unpack", "ff_unpack.*"]}
+
+[tool.setuptools.package-data]
+ff_unpack = ["archives.json", "manifests/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: unpacks real client archives (run with -m integration, optionally --build 104)",
+]
