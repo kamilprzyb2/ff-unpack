@@ -23,6 +23,8 @@ def glb_json(path):
     data = path.read_bytes()
     assert data[:4] == b"glTF" and struct.unpack("<I", data[4:8])[0] == 2
     n = struct.unpack("<I", data[12:16])[0]
+    # a BIN chunk, which VTK's reader (F3D) insists on
+    assert data[24 + n:28 + n] == b"BIN\0", f"{path}: no BIN chunk"
     return json.loads(data[20:20 + n])
 
 

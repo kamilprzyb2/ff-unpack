@@ -94,6 +94,11 @@ def variant_names(sets):
 
 
 def write_glb(writer, path):
+    """Writes a GLTFWriter's .glb. A document whose data all went to shared
+    files gets an empty 4-byte BIN chunk anyway: glTF allows a .glb without
+    one, but VTK's reader (F3D, its thumbnailer) rejects it."""
+    if not writer.bin:
+        writer.bin = bytearray(4)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = f"{path}.{os.getpid()}.tmp"
     with open(tmp, "wb") as f:
