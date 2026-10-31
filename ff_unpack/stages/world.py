@@ -19,6 +19,8 @@
 The manifest lists the tiles, the effects, the music and ambient zones
 (MusicDataStorage) and the main directional light. Nothing is rendered."""
 
+import hashlib
+import json
 import math
 import os
 import re
@@ -29,7 +31,7 @@ from unitypack.mapdata import ATTRIBUTE_HEAL, ATTRIBUTE_POISON, map_attributes, 
 from ..client import Client
 from ..pack import safe
 from .common import AUDIO_CLIP, MAIN, MATERIAL, basename, find, progress, texture_png, write_bytes
-from .prefabs import GENERATOR, write_glb
+from .prefabs import GENERATOR, glb_bytes, write_glb
 
 SUBPACK = "world"
 TILE = re.compile(r"^Map_(\d\d)_(\d\d)\.unity3d$")
@@ -49,17 +51,25 @@ def is_track(e):
     return e.class_id == AUDIO_CLIP and e.path.startswith("bgm/")
 
 
-# --tiles: only these (XX_YY), for trying a change on one area
-ONLY = set()
+def tiles(build, only=None):
+    """The build's map tile archives, or only those whose XX_YY is in only."""
+    return sorted(a for a in build.archives()
+                  if TILE.match(a) and (not only or "_".join(TILE.match(a).groups()) in only))
 
 
-def tiles(build):
-    return sorted(a for a in build.archives() if TILE.match(a) and (not ONLY or "_".join(TILE.match(a).groups()) in ONLY))
-
-
-# EffectEmitterController: an effect the client places at runtime, from a
-# prefab (nifObject) and particle systems (not exported yet)
-EFFECT_SCRIPT = "EffectEmitterController"
+def check_partial(final, only):
+    """Raises if writing a world pack of only some tiles would replace a
+    complete one at final: a reader takes a missing tile for open sea."""
+    if not only:
+        return
+    try:
+        with open(os.path.join(final, "manifest.json")) as f:
+            partial = json.load(f).get("partial", False)
+    except FileNotFoundError:
+        return
+    if not partial:
+        raise RuntimeError(f"{final} holds every tile; a pack of only {', '.join(sorted(only))} would replace it. "
+                           "Write it to another directory")
 
 
 def effect_name(prefab_name):
@@ -68,8 +78,10 @@ def effect_name(prefab_name):
 
 
 def export_effects(asset, out, shared):
-    """The prefabs the scene's effect scripts place, each exported once:
-    {name: {"prefab": its name, "path": container path or None}}"""
+    """The prefabs the scene's effect scripts (EffectEmitterController.
+    nifObject) place, each written once per content as
+    effect/<name>.<hash>.glb (several tiles' processes write side by side;
+    choose_effects() keeps one): {name: {"prefab", "path", "hash"}}."""
     found = {}
     for obj in asset.objects.values():
         if obj.type_id >= 0:
@@ -89,14 +101,42 @@ def export_effects(asset, out, shared):
         name = effect_name(prefab.name)
         if name in found:
             continue
-        path = GLTFWriter(external=None)._container_path(ptr)
-        found[name] = {"prefab": prefab.name, "path": path}
-        f = os.path.join(out, "effect", f"{name}.glb")
-        if not os.path.exists(f):  # another tile's process may have written it
-            w = GLTFWriter(generator=GENERATOR, external=ExternalFiles(shared))
-            w.add_gameobject(prefab, scripts=True)
-            write_glb(w, f)
+        w = GLTFWriter(generator=GENERATOR, external=ExternalFiles(shared))
+        w.add_gameobject(prefab, scripts=True)
+        folder = os.path.join(out, "effect")
+        data = glb_bytes(w, folder)
+        digest = hashlib.sha256(data).hexdigest()[:16]
+        path = os.path.join(folder, f"{name}.{digest}.glb")
+        if not os.path.exists(path):
+            write_bytes(path, data)
+        found[name] = {"prefab": prefab.name, "path": w.container_path(ptr), "hash": digest}
     return found
+
+
+def choose_effects(out, by_tile):
+    """One file per effect name, from the first tile (in name order) that
+    places it: effect/<name>.<hash>.glb becomes effect/<name>.glb, the other
+    copies go. Returns the manifest's effects and the names whose copies
+    differ: 728 keeps a copy in each tile's own sharedAssets, compressed on
+    its own, so their normals and texture coordinates differ a little."""
+    chosen, copies = {}, {}
+    for tile in sorted(by_tile):
+        for name, e in by_tile[tile].items():
+            chosen.setdefault(name, dict(e, tile=tile))
+            copies.setdefault(name, {}).setdefault(e["hash"], []).append(tile)
+    folder = os.path.join(out, "effect")
+    effects, differing = {}, []
+    for name in sorted(chosen):
+        e = chosen[name]
+        os.replace(os.path.join(folder, f"{name}.{e['hash']}.glb"), os.path.join(folder, f"{name}.glb"))
+        for digest in copies[name]:
+            if digest != e["hash"]:
+                os.remove(os.path.join(folder, f"{name}.{digest}.glb"))
+        effects[name] = {"file": f"effect/{name}.glb", "prefab": e["prefab"], "path": e["path"]}
+        if len(copies[name]) > 1:
+            effects[name]["copies"] = len(copies[name])
+            differing.append(name)
+    return effects, differing
 
 
 def toward_light(q):
@@ -199,10 +239,11 @@ def _tile(task):
         return tile, {"error": f"{type(e).__name__}: {e}"}
 
 
-def export_tiles(client, staging, jobs):
+def export_tiles(client, staging, options):
     import multiprocessing
 
-    tasks = [(a, staging.dir, staging.path("shared")) for a in tiles(client.build)]
+    jobs = options.jobs
+    tasks = [(a, staging.dir, staging.path("shared")) for a in tiles(client.build, options.tiles)]
     out = {}
     # Large tiles take over a gigabyte each; a fresh process every few
     # tiles keeps that from piling up.
@@ -224,17 +265,22 @@ class World:
         return is_sky(e) or is_track(e)
 
     @staticmethod
-    def archives(build):
-        return tiles(build)
+    def archives(build, options):
+        return tiles(build, options.tiles)
 
     @staticmethod
-    def run(client, staging, archives, jobs):
-        found = export_tiles(client, staging, jobs)
+    def check(final, options):
+        check_partial(final, options.tiles)
+
+    @staticmethod
+    def run(client, staging, archives, options):
+        found = export_tiles(client, staging, options)
         exported = {t: i for t, i in found.items() if "error" not in i}
         skipped = {t: i["error"] for t, i in found.items() if "error" in i}
-        effects = {}
-        for info in exported.values():
-            effects.update(info.pop("effects", {}))
+        effects, differing = choose_effects(staging.dir, {t: i.pop("effects", {}) for t, i in exported.items()})
+        if differing:
+            client.log(f"  {len(differing)} effects have tiles with differing copies ({', '.join(differing)}); "
+                       "kept the first tile's")
 
         tracks = []
         for e in find(client, archives, is_track):
@@ -252,9 +298,10 @@ class World:
                     client.log(f"  warning: {kind} zone {z['index']} plays {z['file']}, which isn't in the client")
 
         staging.manifest.update(
+            partial=bool(options.tiles),
             tiles=exported,
             skipped=skipped,
-            effects={n: {"file": f"effect/{n}.glb", **e} for n, e in sorted(effects.items())},
+            effects=effects,
             sky={"sets": skies(client, archives, staging), "fusion_rects": FUSION_RECTS},
             light=light(client),
             tracks=sorted(tracks),

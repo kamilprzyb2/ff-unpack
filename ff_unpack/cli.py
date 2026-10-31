@@ -27,6 +27,7 @@ control and don't publish it.
 
 import argparse
 import logging
+import os
 import sys
 import time
 
@@ -35,19 +36,21 @@ from .builds import BUILDS, Build
 from .client import Client, FetchError, default_cache
 from .pack import Staging
 from .plan import seeds
-from .stages import STAGES
+from .stages import STAGES, options as stage_options
 from .stages.common import needed
 
 
-def run_stage(client, out, stage, jobs):
+def run_stage(client, out, stage, options):
     start = time.monotonic()
     client.log(f"{client.build.name}: {stage.name}")
-    archives = seeds(client.build, stage)
+    if hasattr(stage, "check"):
+        stage.check(os.path.join(out, client.build.name, stage.subpack), options)
+    archives = seeds(client.build, stage, options)
     used = needed(client, archives)
     with Staging(out, client.build, stage.subpack) as staging:
         staging.sources = {a: client.sha256(a) for a in used}
         staging.manifest["stage"] = stage.name
-        summary = stage.run(client, staging, archives, jobs)
+        summary = stage.run(client, staging, archives, options)
     client.log(f"  {summary} in {staging.final} ({time.monotonic() - start:.0f} s)")
 
 
@@ -82,15 +85,12 @@ def main(argv=None):
     # Files without type trees log a warning per class they lack; the
     # stages report what they skip themselves.
     logging.disable(logging.WARNING)
-    if args.tiles:
-        from .stages import world
-
-        world.ONLY.update(t.strip() for t in args.tiles.split(",") if t.strip())
+    options = stage_options(args.jobs, [t.strip() for t in (args.tiles or "").split(",") if t.strip()])
     client = Client(Build(args.build), args.cache)
     try:
         for name in dict.fromkeys(args.stages):
-            run_stage(client, args.out, STAGES[name], max(1, args.jobs))
-    except FetchError as e:
+            run_stage(client, args.out, STAGES[name], options)
+    except (FetchError, RuntimeError) as e:
         print(f"ff-unpack: {e}", file=sys.stderr)
         return 1
     return 0

@@ -1,6 +1,6 @@
 # Pack format, version 1
 
-The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; ff-unpack bumps `format_version` whenever the layout or the exported data changes.
+The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; once ff-unpack is published, it bumps `format_version` whenever the layout or the exported data changes. Until then, version 1 is still being worked out and changes in place (see "Versions").
 
 Packs hold FusionFall's art, sound and data, unpacked by the user from their own client files. Don't commit or publish them.
 
@@ -192,12 +192,14 @@ world/
 - every active GameObject: props with their materials (raw Unity material in `extras`), water planes, skinned and animated props, with each Animation component's clips and how it plays them (`extras.animation` on its node);
 - the terrain: a mesh with the heightmap's shifts applied, a base colour texture blended from the splats, and in the material's `extras.terrain`: the splat textures with their tiling, the control maps, the lightmap, and the details (grass prototypes, wind, a density texture per prototype);
 - lights (`KHR_lights_punctual`);
-- each node's scripts and their fields, as stored (`extras.scripts`, UnityPackFF's `scripts`): the effects the client places at runtime (`EffectEmitterController`), the Infected Zones' moving platforms, rings and slides (`Ep*Trigger`) and their waypoints (`Waypoint`). Vectors are in Unity's coordinates; pointers to other nodes are node indices;
+- each node's scripts and their fields (`extras.scripts`, UnityPackFF's `scripts`: `[{"script": class name, "enabled", "fields"}]`): the effects the client places at runtime (`EffectEmitterController`), the Infected Zones' moving platforms, rings, jump pads and slides (`Ep*Trigger`, `EPElementController`) and their waypoints (`Waypoint`). Fields are as stored: vectors in Unity's coordinates (not mirrored), colours as `[r, g, b, a]`; a pointer to another node is `{"node": n}` (plus `"component"` when it names a script on it), anything else `{"object", "type", "path"}`. A script of an unknown class with no fields of its own (Unity's built-in ones) is left out;
 - in the scene's `extras`: `render_settings` (fog, fog colour and density, ambient light) and `colors` (FusionFall's DongColorSetup: fog depth, fog, sky and light colours).
 
 Manifest `tiles`: `{"XX_YY": {"terrain": bool, "attributes": {"size": 129, "poison": cells, "heal": cells}, "warnings": n}}`. Manifest `skipped`: tiles that couldn't be read, with why (104 and 728 have 32 tile scenes without type trees, `Map_16_12` to `Map_23_15`, which nothing can read).
 
-**`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its clips (they loop) and scripts. `<name>` is the prefab's name in lower case. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path, or null where the prefab sits in the tile's own sharedAssets (728)}}`. The effects' particle systems aren't exported.
+Manifest `partial`: `true` when ff-unpack was asked for only some tiles (`--tiles`), `false` for a whole world. A reader that draws missing tiles as sea must not do so for a partial pack. ff-unpack never replaces a whole world pack with a partial one.
+
+**`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its clips (they loop) and scripts; the emitter's node places it. `<name>` is the prefab's name in lower case, and an emitter's `nifObject.object` gives it. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path or null}}`. `path` is null when no container lists the prefab (it sits in a tile's own data). When tiles hold copies of a prefab that differ, the first tile's (by name) is kept and the entry gets `"copies": n`: in 728 every tile has its own copy, compressed on its own, whose normals and texture coordinates differ slightly. The effects' particle systems aren't exported.
 
 **`attr/<XX_YY>.bin`**: the tile's `MapAttributeTable`, 129 × 129 bytes, one per heightmap vertex (4 m apart), stored x-major: byte `x + z × 129`, with x east and z north from the tile's south-west corner. Flags: 8 = poison (standing there hurts), 16 = heal (the server ignores it), 1 and 4 gate some items, values from 64 up mark roads and pavements. Poison overlays are drawn from this by whoever shows them.
 
@@ -221,4 +223,4 @@ Everything in `.glb` files is UnityPackFF's glTF export; its README describes it
 |---|---|---|
 | 1 | 0.1.0 | first version |
 
-Pending: UnityPackFF writing vertex colours (`COLOR_0`) and the additive materials' real texture (`extras.main_texture_index`) changes what the glTF files hold. When ff-unpack is built on a UnityPackFF with them, `format_version` becomes 2.
+Version 1 changes in place until ff-unpack is first published: rebuild packs with the current ff-unpack rather than relying on what an older one wrote. Since the first draft it has gained, among other things, vertex colours (`COLOR_0`) and additive materials' real texture (`extras.main_texture_index`) from UnityPackFF, the tiles' scripts, `effect/` and the manifest's `partial`.

@@ -62,7 +62,7 @@ class Areas:
         return False
 
     @staticmethod
-    def run(client, staging, archives, jobs):
+    def run(client, staging, archives, options):
         rows = write_areas(client, staging)
         return f"{len(rows)} areas"
 
@@ -74,7 +74,7 @@ class Base:
     seed = staticmethod(is_icon)
 
     @staticmethod
-    def run(client, staging, archives, jobs):
+    def run(client, staging, archives, options):
         rows = write_areas(client, staging)
         icons, skipped = write_icons(client, staging, archives)
         for path in skipped:

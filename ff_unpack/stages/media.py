@@ -104,7 +104,7 @@ class Media:
     seed = staticmethod(seed)
 
     @staticmethod
-    def run(client, staging, archives, jobs):
+    def run(client, staging, archives, options):
         audio = {"vo": set(), "story": set(), "hints": set(), "nano": set()}
         for e in find(client, archives, lambda e: e.class_id == AUDIO_CLIP and audio_folder(e.path)):
             folder, name = audio_folder(e.path), safe(basename(e.path))

@@ -200,7 +200,14 @@ def test_world(packs, expected):
     doc = check_uris(folder / "tile" / "04_02.glb")
     root = doc["nodes"][doc["scenes"][0]["nodes"][0]]
     assert root["translation"] == [-4 * 512.0, 0.0, 2 * 512.0]
+    assert m["partial"] is False
+    effects = m["effects"]
+    for name, e in effects.items():
+        assert e["file"] == f"effect/{name}.glb"
+        check_uris(folder / e["file"])
+    assert sorted(p.name for p in (folder / "effect").iterdir()) == sorted(f"{n}.glb" for n in effects)
     picked = [folder / "tile" / f"{t}.glb" for t in sample(m["tiles"], 3)]
+    picked += [folder / e["file"] for e in effects.values()]
     for f in picked:
         check_uris(f)
     validate(picked)
@@ -212,6 +219,8 @@ def test_world(packs, expected):
         "heal": sum(1 for i in m["tiles"].values() if i.get("attributes", {}).get("heal")),
         "sky": m["sky"]["sets"],
         "light": m["light"],
+        "effects": sorted(effects),
+        "effects_with_copies": sorted(n for n, e in effects.items() if "copies" in e),
         "tracks": len(m["tracks"]),
         "music": len(m["music"]),
         "ambient": len(m["ambient"]),

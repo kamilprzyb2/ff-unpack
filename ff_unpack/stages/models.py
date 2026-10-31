@@ -52,7 +52,7 @@ class Models:
         return is_prefab(e) or is_texture(e)
 
     @staticmethod
-    def run(client, staging, archives, jobs):
+    def run(client, staging, archives, options):
         archives = preferred(archives)
         table = xdt(client)
         tasks = []
@@ -61,7 +61,7 @@ class Models:
             tasks.append((e, f"{kind}/{safe(model)}"))
         job = Job(client.build.protocol, client.cache, archives, staging.path("shared"), staging.dir,
                   actor_bones=False, as_worn=False)
-        results = export_all(client, job, tasks, jobs, "prefabs")
+        results = export_all(client, job, tasks, options.jobs, "prefabs")
         prefabs = {"mob": {}, "nano": {}}
         for path, r in sorted(results.items()):
             kind, model = PREFAB.match(path).groups()

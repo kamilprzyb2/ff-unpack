@@ -14,8 +14,10 @@ def load():
         return json.load(f)
 
 
-def seeds(build, stage):
+def seeds(build, stage, options=None):
     """The archives the stage reads for the build, before what they point into."""
+    from .stages import options as default_options
+
     plan = load().get(build.name, {})
-    named = stage.archives(build) if hasattr(stage, "archives") else []
+    named = stage.archives(build, options or default_options()) if hasattr(stage, "archives") else []
     return sorted(set(stage.fixed) | set(named) | set(plan.get(stage.name, [])))

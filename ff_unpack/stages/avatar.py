@@ -103,7 +103,7 @@ class Avatar:
     seed = staticmethod(seed)
 
     @staticmethod
-    def run(client, staging, archives, jobs):
+    def run(client, staging, archives, options):
         archives = preferred(archives)
         table = xdt(client)
         hnpc = hnpc_rows(client)
@@ -114,7 +114,7 @@ class Avatar:
             tasks.append((e, f"actor/{m.group(1)}" if m else f"wear/{safe(WEAR.match(e.path).group(1))}"))
         job = Job(client.build.protocol, client.cache, archives, staging.path("shared"), staging.dir,
                   actor_bones=True, as_worn=True)
-        results = export_all(client, job, tasks, jobs, "prefabs")
+        results = export_all(client, job, tasks, options.jobs, "prefabs")
         actors = {g: results[f"actor/{g}.kfm"] for g in "mw" if f"actor/{g}.kfm" in results}
         wear = {WEAR.match(p).group(1): r for p, r in sorted(results.items()) if WEAR.match(p)}
         failed = sorted(p for p, r in results.items() if "error" in r)
