@@ -63,6 +63,8 @@ def main(argv=None):
                    help="the server protocol whose client to unpack (default: 104)")
     p.add_argument("--cache", default=None, help=f"where downloaded archives are kept (default: {default_cache()})")
     p.add_argument("--jobs", type=int, default=2, help="processes for the stages that use several (default: 2)")
+    p.add_argument("--tiles", default=None, metavar="XX_YY,...",
+                   help="world stage: only these tiles (to try a change on one area; the pack lists only them)")
     p.add_argument("--list-stages", action="store_true", help="list the stages and exit")
     p.add_argument("--version", action="version", version=f"ff-unpack {__version__}")
     args = p.parse_intermixed_args(argv)
@@ -80,6 +82,10 @@ def main(argv=None):
     # Files without type trees log a warning per class they lack; the
     # stages report what they skip themselves.
     logging.disable(logging.WARNING)
+    if args.tiles:
+        from .stages import world
+
+        world.ONLY.update(t.strip() for t in args.tiles.split(",") if t.strip())
     client = Client(Build(args.build), args.cache)
     try:
         for name in dict.fromkeys(args.stages):

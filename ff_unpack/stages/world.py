@@ -3,16 +3,21 @@
     tile/<XX_YY>.glb    every map tile scene (Map_XX_YY), exported whole by
                         UnityPackFF: props, terrain (shifts applied, splat and
                         control maps, lightmap and grass in the material's
-                        extras), animated props with their clips, lights, and
-                        the scene's fog and colours in its extras; at its
-                        world position
+                        extras), animated props with their clips, lights,
+                        each node's scripts and their fields (effects, the
+                        Infected Zones' platforms and waypoints), and the
+                        scene's fog and colours in its extras; at its world
+                        position
+    effect/<name>.glb   the effect prefabs the tiles' effect scripts place
+                        (EffectEmitterController.nifObject: the Infected
+                        Zones' barriers), named by the prefab, lower case
     shared/             images and mesh data, named by their content
     attr/<XX_YY>.bin    the tile's MapAttributeTable, 129 x 129 bytes
     sky/<set>/skybox_<side>tex.png  the two skyboxes
     bgm/<file>.ogg      the music and ambient tracks
 
-The manifest lists the tiles, the music and ambient zones (MusicDataStorage)
-and the main directional light. Nothing is rendered."""
+The manifest lists the tiles, the effects, the music and ambient zones
+(MusicDataStorage) and the main directional light. Nothing is rendered."""
 
 import math
 import os
@@ -44,8 +49,54 @@ def is_track(e):
     return e.class_id == AUDIO_CLIP and e.path.startswith("bgm/")
 
 
+# --tiles: only these (XX_YY), for trying a change on one area
+ONLY = set()
+
+
 def tiles(build):
-    return sorted(a for a in build.archives() if TILE.match(a))
+    return sorted(a for a in build.archives() if TILE.match(a) and (not ONLY or "_".join(TILE.match(a).groups()) in ONLY))
+
+
+# EffectEmitterController: an effect the client places at runtime, from a
+# prefab (nifObject) and particle systems (not exported yet)
+EFFECT_SCRIPT = "EffectEmitterController"
+
+
+def effect_name(prefab_name):
+    "The file an effect prefab goes to: effect/<name>.glb"
+    return safe(prefab_name.lower())
+
+
+def export_effects(asset, out, shared):
+    """The prefabs the scene's effect scripts place, each exported once:
+    {name: {"prefab": its name, "path": container path or None}}"""
+    found = {}
+    for obj in asset.objects.values():
+        if obj.type_id >= 0:
+            continue
+        try:
+            fields = obj.read()
+        except Exception:
+            continue
+        fields = getattr(fields, "_obj", fields)
+        if not hasattr(fields, "get") or "effectName" not in fields or not fields.get("nifObject"):
+            continue
+        ptr = fields["nifObject"]
+        try:
+            prefab = ptr.resolve()
+        except Exception:
+            continue
+        name = effect_name(prefab.name)
+        if name in found:
+            continue
+        path = GLTFWriter(external=None)._container_path(ptr)
+        found[name] = {"prefab": prefab.name, "path": path}
+        f = os.path.join(out, "effect", f"{name}.glb")
+        if not os.path.exists(f):  # another tile's process may have written it
+            w = GLTFWriter(generator=GENERATOR, external=ExternalFiles(shared))
+            w.add_gameobject(prefab, scripts=True)
+            write_glb(w, f)
+    return found
 
 
 def toward_light(q):
@@ -130,9 +181,12 @@ def _tile(task):
             # in them can be read (UnityPackFF's README)
             return tile, {"error": "no type trees"}
         w = GLTFWriter(generator=GENERATOR, external=ExternalFiles(shared))
-        w.add_scene(asset)
+        w.add_scene(asset, scripts=True)
         write_glb(w, os.path.join(out, "tile", f"{tile}.glb"))
         info = {"terrain": any(o.type_id == TERRAIN_COLLIDER for o in asset.objects.values())}
+        effects = export_effects(asset, out, shared)
+        if effects:
+            info["effects"] = effects
         attrs = map_attributes(asset)
         if attrs is not None:
             write_bytes(os.path.join(out, "attr", f"{tile}.bin"), attrs.values)
@@ -178,6 +232,9 @@ class World:
         found = export_tiles(client, staging, jobs)
         exported = {t: i for t, i in found.items() if "error" not in i}
         skipped = {t: i["error"] for t, i in found.items() if "error" in i}
+        effects = {}
+        for info in exported.values():
+            effects.update(info.pop("effects", {}))
 
         tracks = []
         for e in find(client, archives, is_track):
@@ -197,11 +254,12 @@ class World:
         staging.manifest.update(
             tiles=exported,
             skipped=skipped,
+            effects={n: {"file": f"effect/{n}.glb", **e} for n, e in sorted(effects.items())},
             sky={"sets": skies(client, archives, staging), "fusion_rects": FUSION_RECTS},
             light=light(client),
             tracks=sorted(tracks),
             **music,
         )
         poison = sum(1 for i in exported.values() if i.get("attributes", {}).get("poison"))
-        return (f"{len(exported)} tiles ({len(skipped)} unreadable, {poison} with poison), "
+        return (f"{len(exported)} tiles ({len(skipped)} unreadable, {poison} with poison), {len(effects)} effects, "
                 f"{len(tracks)} tracks, {len(music['music'])} music and {len(music['ambient'])} ambient zones")

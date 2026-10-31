@@ -180,6 +180,7 @@ The guide's pictures are JPEGs in the client's container (`help/*.jpg`) and are 
 world/
   manifest.json
   tile/<XX_YY>.glb               one per map tile scene (Map_XX_YY)
+  effect/<name>.glb              the effect prefabs the tiles' scripts place
   shared/
   attr/<XX_YY>.bin               the tile's MapAttributeTable
   sky/<set>/skybox_<side>tex.png
@@ -191,9 +192,12 @@ world/
 - every active GameObject: props with their materials (raw Unity material in `extras`), water planes, skinned and animated props, with each Animation component's clips and how it plays them (`extras.animation` on its node);
 - the terrain: a mesh with the heightmap's shifts applied, a base colour texture blended from the splats, and in the material's `extras.terrain`: the splat textures with their tiling, the control maps, the lightmap, and the details (grass prototypes, wind, a density texture per prototype);
 - lights (`KHR_lights_punctual`);
+- each node's scripts and their fields, as stored (`extras.scripts`, UnityPackFF's `scripts`): the effects the client places at runtime (`EffectEmitterController`), the Infected Zones' moving platforms, rings and slides (`Ep*Trigger`) and their waypoints (`Waypoint`). Vectors are in Unity's coordinates; pointers to other nodes are node indices;
 - in the scene's `extras`: `render_settings` (fog, fog colour and density, ambient light) and `colors` (FusionFall's DongColorSetup: fog depth, fog, sky and light colours).
 
 Manifest `tiles`: `{"XX_YY": {"terrain": bool, "attributes": {"size": 129, "poison": cells, "heal": cells}, "warnings": n}}`. Manifest `skipped`: tiles that couldn't be read, with why (104 and 728 have 32 tile scenes without type trees, `Map_16_12` to `Map_23_15`, which nothing can read).
+
+**`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its clips (they loop) and scripts. `<name>` is the prefab's name in lower case. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path, or null where the prefab sits in the tile's own sharedAssets (728)}}`. The effects' particle systems aren't exported.
 
 **`attr/<XX_YY>.bin`**: the tile's `MapAttributeTable`, 129 × 129 bytes, one per heightmap vertex (4 m apart), stored x-major: byte `x + z × 129`, with x east and z north from the tile's south-west corner. Flags: 8 = poison (standing there hurts), 16 = heal (the server ignores it), 1 and 4 gate some items, values from 64 up mark roads and pavements. Poison overlays are drawn from this by whoever shows them.
 

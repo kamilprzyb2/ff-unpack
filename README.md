@@ -39,6 +39,7 @@ Stages share archives, so all six together download the whole build once (about 
 Options:
 
 - `--cache DIR`: where downloaded archives are kept, and unpacked (default `~/.cache/ff-unpack`). Stages share it, so the second stage downloads only what the first didn't. The layout is UnityPackFF's test cache's, so `--cache ~/.cache/unitypackff-tests` reuses archives its tests downloaded.
+- `--tiles XX_YY,...`: stage `world` unpacks only these tiles (to try a change on one area; the manifest lists only them).
 - `--jobs N`: processes for the stages that export many models or tiles (`avatar`, `models`, `world`; default 2). Each world tile process can take over a gigabyte of memory.
 
 Each sub-pack is written beside its final place and swapped in when it's complete, so a server reading the packs never sees half of one, and a failed run leaves the old pack in place. Each has a `manifest.json` that says what's in it, which client archives it came from (`sources`, with their hashes) and a `fingerprint` that changes exactly when those do.
