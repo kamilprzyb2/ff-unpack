@@ -179,7 +179,7 @@ Manifest fields:
 | `story`, `hints` | file names in `story/` and `hints/` |
 | `nanos` | `{prefab: {animation clip: [file, ...]}}`: the voice files the `sound` events of each of a nano's animation clips play (`AnimationEventHandler`), with `(RAND:a-b)` ranges expanded, files in `nano/` |
 | `dismiss` | `{name: [file, ...]}`: the dismiss lines `NanoContainer` plays by the nano's display name (`dee_dee`, `prof._utonium`), files in `nano/` |
-| `nano_clips` | every voice file in `nano/`, including takes no event plays |
+| `nano_voices` | every voice file in `nano/`, including takes no event plays |
 | `ep` | `{"big": [id, ...], "small": [...]}` |
 | `backdrops` | `{zone: [panel, ...]}`: zones `future`, `suburbs`, `downtown`, `wilds`, `darklands`; panels 1–10, 542 × 477 each, shown side by side in order (`CnGuiCharSelection`) |
 | `help` | names in `help/` |

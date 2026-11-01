@@ -176,7 +176,7 @@ def test_media(packs, expected):
         "nanos_with_events": len(m["nanos"]),
         "nano_event_lines": len({f for c in m["nanos"].values() for fs in c.values() for f in fs}),
         "dismiss": sum(len(v) for v in m["dismiss"].values()),
-        "nano_clips": len(m["nano_clips"]),
+        "nano_voices": len(m["nano_voices"]),
         "ep": [len(m["ep"]["big"]), len(m["ep"]["small"])],
         "backdrops": sorted(m["backdrops"]),
         "help": len(m["help"]),

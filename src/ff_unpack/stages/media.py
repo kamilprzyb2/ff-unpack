@@ -162,7 +162,7 @@ class Media:
             hints=sorted(audio["hints"]),
             nanos=events,
             dismiss=dismiss,
-            nano_clips=sorted(audio["nano"]),
+            nano_voices=sorted(audio["nano"]),
             ep={k: sorted(v) for k, v in ep.items()},
             backdrops={z: sorted(p) for z, p in sorted(backdrops.items())},
             help=sorted(helps),
