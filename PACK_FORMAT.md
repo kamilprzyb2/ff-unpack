@@ -159,7 +159,7 @@ or, for a worn item the XDT gives textures,
 
 **`hnpc.json`**: the rows of `all_hnpc.asset` (`TableElement`) as they are: `iType`, `strHairMesh`, `strHairTexture`, …, `iHeight`, `iShape`, `iSkinColor`, `iHairColor`. Mesh and texture names are the client's (`f_head_014_type01.nif`, `f_head_014_a.dds`). NPC rows refer to them by `m_iHNpcNum`.
 
-**`tables.json`**: `{table: {list: rows}}` from the client's XDT: the item tables' `m_pItemData` and `m_pItemMeshData` (shirts, pants, shoes, hats, glasses, back items, weapons, vehicles, faces, hair), `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`), `m_pAvatarTable`, `m_pAnimationTable.m_pAvatarData` and `m_pEmoteTable`. These are the client's own tables.
+**`tables.json`**: `{table: {list: rows}}` from the client's XDT: the item tables' `m_pItemData`, `m_pItemMeshData` and `m_pItemStringData` (shirts, pants, shoes, hats, glasses, back items, weapons, vehicles, faces, hair), `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`, `m_pNpcStringData`), `m_pAvatarTable`, `m_pAnimationTable.m_pAvatarData` and `m_pEmoteTable`. These are the client's own tables. A row's name is its table's string list at the row's name index (`m_iItemName`, `m_iNpcName`): `m_strName`, with `m_strComment` the description.
 
 **`emote/`**: the chat menu's emote icons (`angryicon.png`, …).
 
@@ -182,7 +182,7 @@ The root node is where the client places the NPC. Every animation clip is export
 
 **`textures.json`**: as in `avatar/`, for the textures the XDT names for mobs, NPCs, shinies, the bus and nanos.
 
-**`tables.json`**: `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`), `m_pNanoTable` (`m_pNanoData`, `m_pNanoMeshData`), `m_pShinyTable`, `m_pTransportationTable` (data and mesh rows each), and `m_pAnimationTable` (`m_pNpcData`, `m_pNanoData`). An NPC row's `m_iMesh` indexes its table's mesh rows, whose `m_pstrMMeshModelString` is the prefab's `<model>`. `m_iRadius` and `m_iHeight` (centimetres) are the NPC's hitbox cylinder.
+**`tables.json`**: `m_pNpcTable` (`m_pNpcData`, `m_pNpcMeshData`, `m_pNpcStringData`), `m_pNanoTable` (`m_pNanoData`, `m_pNanoMeshData`, `m_pNanoStringData`), `m_pShinyTable` (data, mesh and string rows), `m_pTransportationTable` (data and mesh rows), and `m_pAnimationTable` (`m_pNpcData`, `m_pNanoData`). An NPC row's `m_iMesh` indexes its table's mesh rows, whose `m_pstrMMeshModelString` is the prefab's `<model>`, and its `m_iNpcName` its string rows, whose `m_strName` is its name (nanos: `m_iNanoName`; shinies: `m_iShinyName`). `m_iRadius` and `m_iHeight` (centimetres) are the NPC's hitbox cylinder, `m_fScale` the model's scale. Variants of a creature (the same model in other sizes, a boss among them) are rows of their own: their names, levels and scales differ, and `m_iDifficulty` is 2 for the big ones.
 
 ## media/
 
