@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Unpacks the FusionFall game client into documented packs"
 readme = "README.md"
 license = "MIT"
-license-files = ["LICENSE", "ff_unpack/manifests/LICENSE"]
+license-files = ["LICENSE", "src/ff_unpack/manifests/LICENSE"]
 authors = [{name = "Kamil Przybylski"}]
 requires-python = ">=3.10"
 dependencies = [
@@ -29,7 +29,7 @@ ff-unpack = "ff_unpack.cli:main"
 version = {attr = "ff_unpack.__version__"}
 
 [tool.setuptools.packages]
-find = {include = ["ff_unpack", "ff_unpack.*"]}
+find = {where = ["src"], include = ["ff_unpack", "ff_unpack.*"]}
 
 [tool.setuptools.package-data]
 ff_unpack = ["archives.json", "manifests/*.json", "manifests/LICENSE"]

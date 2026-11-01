@@ -48,7 +48,7 @@ Each sub-pack is written beside its final place and swapped in when it's complet
 
 ### Where the files come from
 
-ff-unpack ships the launcher manifests of the three builds (`ff_unpack/manifests/`, copied unchanged from [OpenFusionLauncher](https://github.com/OpenFusionProject/OpenFusionLauncher)'s `resources/defaults/versions/`). Each one gives the build's download address (`http://cdn.dexlabs.systems/ff/big/<build>/`, the CDN the launcher itself uses) and every archive's name, size and SHA-256, and the SHA-256 of every file inside it (except `main.unity3d`'s, which the manifests don't list). `--build` picks the manifest, so nothing else needs configuring. An archive whose hash doesn't match is rejected, not unpacked.
+ff-unpack ships the launcher manifests of the three builds (`src/ff_unpack/manifests/`, copied unchanged from [OpenFusionLauncher](https://github.com/OpenFusionProject/OpenFusionLauncher)'s `resources/defaults/versions/`). Each one gives the build's download address (`http://cdn.dexlabs.systems/ff/big/<build>/`, the CDN the launcher itself uses) and every archive's name, size and SHA-256, and the SHA-256 of every file inside it (except `main.unity3d`'s, which the manifests don't list). `--build` picks the manifest, so nothing else needs configuring. An archive whose hash doesn't match is rejected, not unpacked.
 
 ## Develop
 
@@ -61,9 +61,11 @@ pytest -m integration --build 104 --world
 
 The integration tests download what they need into the cache (`FF_UNPACK_CACHE`, default `~/.cache/ff-unpack`), unpack into a temporary directory, and compare counts and checks against `tests/expected/<build>.json`. With `--record` they rewrite those. With `FF_UNPACK_GLTF_VALIDATOR` set to a directory with `node_modules/gltf-validator`, they also validate a sample of the glTF files.
 
-`ff_unpack/archives.json` pins which archives hold what each stage exports, per build. Finding that out means reading every archive's container, so `tools/plan_archives.py` does it once from a cache that has every archive. Run it after changing what a stage picks (`seed()`).
+`src/ff_unpack/archives.json` pins which archives hold what each stage exports, per build. Finding that out means reading every archive's container, so `tools/plan_archives.py` does it once from a cache that has every archive. Run it after changing what a stage picks (`seed()`).
 
 ### Layout of the code
+
+In `src/ff_unpack/`:
 
 - `builds.py`: the three builds, pinned by the launcher manifests in `manifests/` (copied from OpenFusionLauncher).
 - `client.py`: the archive cache (download, check, unpack) and reading the files with UnityPackFF.
@@ -77,4 +79,4 @@ UnityPackFF decodes what's in the client's files and exports it as glTF. ff-unpa
 
 ## License
 
-MIT, see [LICENSE](LICENSE). The launcher manifests in `ff_unpack/manifests/` are OpenFusionLauncher's, under its MIT license ([ff_unpack/manifests/LICENSE](ff_unpack/manifests/LICENSE)).
+MIT, see [LICENSE](LICENSE). The launcher manifests in `src/ff_unpack/manifests/` are OpenFusionLauncher's, under its MIT license ([src/ff_unpack/manifests/LICENSE](src/ff_unpack/manifests/LICENSE)).

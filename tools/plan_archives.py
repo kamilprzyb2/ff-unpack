@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerates ff_unpack/archives.json: for each build and stage, the
+"""Regenerates src/ff_unpack/archives.json: for each build and stage, the
 archives whose containers hold something the stage exports.
 
 Needs every archive of each build in the cache (it downloads what's
@@ -14,12 +14,13 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from ff_unpack.builds import BUILDS, Build  # noqa: E402
-from ff_unpack.client import Client  # noqa: E402
-from ff_unpack.stages import STAGES  # noqa: E402
+import ff_unpack
+from ff_unpack.builds import BUILDS, Build
+from ff_unpack.client import Client
+from ff_unpack.stages import STAGES
 
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ff_unpack", "archives.json")
+# the checkout's, with ff-unpack installed from it (pip install -e .)
+OUT = os.path.join(os.path.dirname(os.path.abspath(ff_unpack.__file__)), "archives.json")
 
 
 def main():
