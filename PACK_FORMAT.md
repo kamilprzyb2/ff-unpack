@@ -1,6 +1,6 @@
 # Pack format, version 1
 
-The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; ff-unpack bumps `format_version` whenever the layout or the exported data changes.
+The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads. "Versions" at the end says when the version changes, and lists every change.
 
 ## Layout
 
@@ -9,6 +9,7 @@ The contract between ff-unpack and everything that reads its output. A reader st
   beta-20100104/        one directory per client build (protocol 104)
     areas/              named areas
     icons/              icons
+    map/                the world map and the minimap
     avatar/             player characters
     models/             mobs, NPCs, nanos
     media/              voices and UI art
@@ -71,6 +72,33 @@ icons/
 ```
 
 Every texture in an `icons/` folder of the client, named as the client names it (`cosicon_00.png`, `nanoicon_01.png`, `mobicon_12.png`). The XDT's icon tables give an item, nano or NPC's icon number. Manifest field `icons`: the file names.
+
+## map/
+
+The client's world map (`WorldMapMode`) and the NanoCom's minimap (`cnGUINanocom`), as the client stores them.
+
+```
+map/
+  manifest.json
+  payzone_001.png … payzone_004.png      the world map, one image per zoom step
+  freezone_001.png, freezone_002.png     the Future's and the tutorial square's map
+  darkland_001.png, darkland_002.png     the Dark Lands' map
+  all_minimap_01.png … all_minimap_16.png  the minimap, a 4 × 4 grid of sheets
+  all_minimap.png                        the whole minimap in one image
+```
+
+**Every image covers the whole map**, `[0, 8192)` metres both ways (the 16 × 16 tiles of `areas/`), north up, at its own resolution: 1024 or 2048 pixels square, the minimap sheets 512. The zones' images show their zone, with filler around it. Rectangles in the manifest are `[x, y, width, height]` in metres, x east and y north, as in `areas.json`.
+
+Manifest fields:
+
+| Field | |
+|---|---|
+| `size` | `8192`: the side of the square every image covers, in metres |
+| `world` | the world map's zoom steps, widest first: `[{"file", "span"}]`. `span` is how much of the map's width the client shows at that step (1, 0.5, 0.25, 0.1159668). The widest step shows the whole map |
+| `zones` | `{"future", "darklands", "tutorial"}`, each `{"rect", "levels"}`: a player inside `rect` gets that zone's map instead of the world map, kept within `rect`. `levels` are its zoom steps as in `world`; the Future and the Dark Lands open at step 3 of 4, the tutorial at step 4 |
+| `minimap` | `{"all": "all_minimap.png", "sheets": [{"file", "rect"}]}`: sheet `NN` covers a 2048 m square, numbered from the north-west corner across and then south (sheet 01 is `[0, 6144, 2048, 2048]`, sheet 16 `[6144, 0, 2048, 2048]`) |
+
+The three builds have the same images. Missing ones are left out of the manifest.
 
 ## avatar/
 
@@ -231,6 +259,11 @@ Everything in `.glb` files is UnityPackFF's glTF export; its README describes it
 
 ## Versions
 
+`format_version` goes up when something a reader may rely on changes or goes away: a file or folder is moved or renamed, a field is removed or renamed, or a value changes its meaning, units or coordinates. It stays the same for additions: a new sub-pack, new files, new fields in a manifest or a JSON file. Readers ignore what they don't know.
+
+Every change is listed below, additions too, with the ff-unpack version that first writes it (the manifests' `ff_unpack`). A reader that needs an addition checks that version.
+
 | `format_version` | ff-unpack | Changes |
 |---|---|---|
-| 1 | 0.1.0 | first version |
+| 1 | 0.1.0 | first version: `areas/`, `icons/`, `avatar/`, `models/`, `media/`, `world/` |
+| 1 | 0.2.0 | new sub-pack `map/`: the world map and the minimap |

@@ -7,6 +7,7 @@ from unitypack.xdttextures import FIRST, WORN, Swap
 from ff_unpack.client import Entry
 from ff_unpack.stages import STAGES
 from ff_unpack.stages.avatar import ACTOR, EMOTE, WEAR, named_textures, preferred
+from ff_unpack.stages.map import is_map, sheet_rect
 from ff_unpack.stages.media import CSBG, DISMISS, EP, HELP, audio_folder, sounds
 from ff_unpack.stages.models import preferred as models_preferred
 from ff_unpack.stages.prefabs import variant_names
@@ -18,7 +19,7 @@ def entry(path, class_id, archive="X.resourceFile"):
 
 
 def test_stage_names():
-    assert list(STAGES) == ["areas", "icons", "avatar", "models", "media", "world"]
+    assert list(STAGES) == ["areas", "icons", "map", "avatar", "models", "media", "world"]
     # each stage writes the sub-pack of its own name
     assert all(s.subpack == name for name, s in STAGES.items())
 
@@ -120,3 +121,21 @@ def test_entry_is_a_tuple():
     # the nano archives' skins aren't worn
     assert not STAGES["avatar"].seed(entry("texture/nano_eddy.dds", 28, "Nano_001.resourceFile"))
     assert STAGES["avatar"].seed(entry("texture/m_skin.dds", 28, "CharTexture.resourceFile"))
+
+
+def test_map_names():
+    assert is_map(entry("tutorialassets/payzone_004.psd", 28))
+    assert is_map(entry("uiassets/ui_minimap/all_minimap_16.png", 28))
+    assert is_map(entry("uiassets/ui_map/darkland_001.psd", 28))
+    assert not is_map(entry("tutorialassets/all_minimap_17.png", 28))
+    assert not is_map(entry("tutorialassets/mapframe.png", 28))
+    assert not is_map(entry("tutorialassets/minimap.mat", 21))
+    assert not is_map(entry("icons/payzone_001.png", 28))
+
+
+def test_minimap_sheets():
+    # sheet 1 is the north-west corner, sheet 16 the south-east (cnGUINanocom)
+    assert sheet_rect(1) == [0, 6144, 2048, 2048]
+    assert sheet_rect(4) == [6144, 6144, 2048, 2048]
+    assert sheet_rect(13) == [0, 0, 2048, 2048]
+    assert sheet_rect(16) == [6144, 0, 2048, 2048]

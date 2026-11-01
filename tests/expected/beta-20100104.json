@@ -55,6 +55,16 @@
   ],
   "icons": 2681
  },
+ "map": {
+  "images": 25,
+  "sheets": 16,
+  "world": 4,
+  "zones": {
+   "darklands": 2,
+   "future": 2,
+   "tutorial": 1
+  }
+ },
  "media": {
   "backdrops": [
    "darklands",

@@ -1,6 +1,6 @@
 """ff-unpack: unpack the FusionFall client into packs.
 
-    ff-unpack OUT --build 104 areas icons avatar models media world
+    ff-unpack OUT --build 104 areas icons map avatar models media world
     ff-unpack OUT --build 1013 areas
     ff-unpack --list-stages
 
@@ -13,6 +13,8 @@ swapped in whole.
 Stages:
   areas   areas/: the client's named areas (reads only TableData)
   icons   icons/: every icon
+  map     map/: the world map at each zoom step, the Future's and the
+          Dark Lands' maps, the minimap
   avatar  avatar/: the boy and girl actors with every animation clip,
           everything players wear, colour palettes, human NPC looks,
           emote icons

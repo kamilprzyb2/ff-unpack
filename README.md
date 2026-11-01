@@ -19,7 +19,7 @@ or, from a checkout, `pip install -e '.[test]'`. UnityPackFF comes from my fork'
 ## Use
 
 ```sh
-ff-unpack packs --build 104 areas icons avatar models media world
+ff-unpack packs --build 104 areas icons map avatar models media world
 ff-unpack packs --build 1013 areas
 ```
 
@@ -29,12 +29,13 @@ This writes `packs/beta-20100104/areas/`, `packs/beta-20100104/icons/` and so on
 |---|---|---|
 | `areas` | the client's named areas | 1 / 1 / 1 MB |
 | `icons` | every icon | 50 / 76 / 94 MB |
+| `map` | the world map at each zoom step, the Future's and the Dark Lands' maps, the minimap | 26 / 25 / 2 MB |
 | `avatar` | the boy and girl actors with every animation clip, everything players wear, colour palettes, human NPC looks, emote icons | 89 / 93 / 128 MB |
 | `models` | every mob, NPC and nano prefab with every animation clip | 399 / 435 / 588 MB |
 | `media` | voice lines, story and hint recordings, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
 | `world` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
 
-Stages share archives, so all six together download each archive once: 473 / 967 / 702 MB in all. `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
+Stages share archives, so all seven together download each archive once: 473 / 967 / 704 MB in all. `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
 
 Options:
 
@@ -44,7 +45,7 @@ Options:
 
 Each sub-pack is written beside its final place and swapped in when it's complete, so a program reading the packs never sees half of one, and a failed run leaves the old pack in place. Each has a `manifest.json` that says what's in it, which client archives it came from (`sources`, with their hashes) and a `fingerprint` that changes exactly when those, or the versions of ff-unpack and UnityPackFF that made it, do.
 
-`areas`, `icons` and `media` take seconds. `avatar` and `models` export thousands of glTF files and `world` every map tile, which takes by far the longest; `--jobs` spreads those three over processes.
+`areas`, `icons`, `map` and `media` take seconds. `avatar` and `models` export thousands of glTF files and `world` every map tile, which takes by far the longest; `--jobs` spreads those three over processes.
 
 ### Where the files come from
 

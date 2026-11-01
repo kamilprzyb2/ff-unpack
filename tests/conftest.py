@@ -22,7 +22,7 @@ import pytest
 from ff_unpack.builds import BUILDS, Build
 
 EXPECTED = Path(__file__).resolve().parent / "expected"
-ALL_STAGES = ["areas", "icons", "avatar", "models", "media", "world"]
+ALL_STAGES = ["areas", "icons", "map", "avatar", "models", "media", "world"]
 
 
 def pytest_addoption(parser):
