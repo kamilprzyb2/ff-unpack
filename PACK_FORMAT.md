@@ -17,7 +17,7 @@ The contract between ff-unpack and everything that reads its output. A reader st
   beta-20111013/        protocol 1013
 ```
 
-Each build directory is named after its client build, and the protocol version maps to it: 104 → `beta-20100104`, 728 → `beta-20100728`, 1013 → `beta-20111013`. Each sub-pack is optional and stands alone. ff-unpack writes a sub-pack next to its final place and renames it into place in one step, so a reader sees the old pack or the new one, never half of one.
+Each build directory is named after its client build, and the protocol version maps to it: 104 → `beta-20100104`, 728 → `beta-20100728`, 1013 → `beta-20111013`. Each sub-pack is optional and stands alone. ff-unpack writes a sub-pack next to its final place, in a hidden folder (`.<sub-pack>-<random>/`), and renames it into place in one step, so a reader sees the old pack or the new one, never half of one. Readers should skip hidden folders: one is there while ff-unpack runs, or after it was killed.
 
 ## Conventions
 
