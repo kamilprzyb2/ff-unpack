@@ -22,10 +22,12 @@ PREFABS = (GAME_OBJECT, TRANSFORM)
 # Where a prefab that several archives hold is taken from: the shared ones
 # before the per-tile DongResources (the copies are the same prefab).
 PREFERRED = ("World_shared", "Freearea", "TrainingGrounds", "Tutorial", "Nano", "FutureNano", "CharacterCreation")
+# Each table's string list holds its rows' names (a row's m_iNpcName,
+# m_iNanoName, ... indexes it), its icon list their icons (m_iIcon1).
 TABLES = {
-    "m_pNpcTable": ("m_pNpcData", "m_pNpcMeshData"),
-    "m_pNanoTable": ("m_pNanoData", "m_pNanoMeshData"),
-    "m_pShinyTable": ("m_pShinyData", "m_pShinyMeshData"),
+    "m_pNpcTable": ("m_pNpcData", "m_pNpcMeshData", "m_pNpcStringData", "m_pNpcIconData"),
+    "m_pNanoTable": ("m_pNanoData", "m_pNanoMeshData", "m_pNanoStringData", "m_pNanoIconData"),
+    "m_pShinyTable": ("m_pShinyData", "m_pShinyMeshData", "m_pShinyStringData"),
     "m_pTransportationTable": ("m_pTransportationData", "m_pTransportationMeshData"),
     "m_pAnimationTable": ("m_pNpcData", "m_pNanoData"),
 }

@@ -22,19 +22,20 @@ ACTOR = re.compile(r"^actor/([mw])\.kfm$")
 WEAR = re.compile(r"^wear/(.+)\.nif$")
 EMOTE = re.compile(r"(^|/)(ui_)?emotechaticon/([^/]+)\.png$")
 # The XDT tables a character builder reads (item → model and textures,
-# human NPCs, animations and emotes by id).
+# human NPCs, animations and emotes by id), with the items' and NPCs' names
+# and icons.
 TABLES = {
-    "m_pShirtsItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pPantsItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pShoesItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pHatItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pGlassItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pBackItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pWeaponItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pVehicleItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pFaceItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pHeadItemTable": ("m_pItemData", "m_pItemMeshData"),
-    "m_pNpcTable": ("m_pNpcData", "m_pNpcMeshData"),
+    "m_pShirtsItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pPantsItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pShoesItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pHatItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pGlassItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pBackItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pWeaponItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pVehicleItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pFaceItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pHeadItemTable": ("m_pItemData", "m_pItemMeshData", "m_pItemStringData", "m_pItemIconData"),
+    "m_pNpcTable": ("m_pNpcData", "m_pNpcMeshData", "m_pNpcStringData", "m_pNpcIconData"),
     "m_pAvatarTable": ("m_pAvatarData", "m_pAvatarGrowData"),
     "m_pAnimationTable": ("m_pAvatarData",),
     "m_pEmoteTable": ("m_pEmoteAnimationData", "m_pEmoteTextureData"),
