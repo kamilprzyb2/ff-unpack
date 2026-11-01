@@ -37,8 +37,7 @@
   "wear_variants": 3452,
   "wear_with_clips": 112
  },
- "base": {
-  "areas": 93,
+ "icons": {
   "icon_families": [
    "cosicon",
    "generalitemicon",

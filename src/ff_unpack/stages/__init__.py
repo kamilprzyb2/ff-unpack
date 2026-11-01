@@ -11,13 +11,14 @@ with `archives(build, options)`."""
 
 from types import SimpleNamespace
 
+from .areas import Areas
 from .avatar import Avatar
-from .base import Areas, Base
+from .icons import Icons
 from .media import Media
 from .models import Models
 from .world import World
 
-STAGES = {s.name: s for s in (Areas, Base, Avatar, Models, Media, World)}
+STAGES = {s.name: s for s in (Areas, Icons, Avatar, Models, Media, World)}
 
 
 def options(jobs=2, tiles=None):

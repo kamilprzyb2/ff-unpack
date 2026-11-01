@@ -18,8 +18,9 @@ def entry(path, class_id, archive="X.resourceFile"):
 
 
 def test_stage_names():
-    assert list(STAGES) == ["areas", "base", "avatar", "models", "media", "world"]
-    assert STAGES["areas"].subpack == STAGES["base"].subpack == "base"
+    assert list(STAGES) == ["areas", "icons", "avatar", "models", "media", "world"]
+    # each stage writes the sub-pack of its own name
+    assert all(s.subpack == name for name, s in STAGES.items())
 
 
 def test_variant_names():
@@ -109,8 +110,8 @@ def test_light_direction():
 
 def test_entry_is_a_tuple():
     e = entry("icons/cosicon_00.png", 28)
-    assert STAGES["base"].seed(e)
-    assert not STAGES["base"].seed(entry("icons/cosicon_00.png", 21))
+    assert STAGES["icons"].seed(e)
+    assert not STAGES["icons"].seed(entry("icons/cosicon_00.png", 21))
     assert STAGES["world"].seed(entry("bgm/01 midtown.ogg", 83))
     assert STAGES["models"].seed(entry("mob/mob_spawn_wolf.kfm", 1))
     assert STAGES["models"].seed(entry("nano/nano_eddy.kfm", 4))

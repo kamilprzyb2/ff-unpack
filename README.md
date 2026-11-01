@@ -19,20 +19,20 @@ or, from a checkout, `pip install -e '.[test]'`. UnityPackFF comes from my fork'
 ## Use
 
 ```sh
-ff-unpack packs --build 104 base avatar models media world
+ff-unpack packs --build 104 areas icons avatar models media world
 ff-unpack packs --build 1013 areas
 ```
 
-This writes `packs/beta-20100104/base/`, `packs/beta-20100104/avatar/` and so on: one directory per build, one sub-pack per stage. `--build` takes the protocol version: 104 (beta-20100104, "Original"), 728 (beta-20100728) or 1013 (beta-20111013, "Academy").
+This writes `packs/beta-20100104/areas/`, `packs/beta-20100104/icons/` and so on: one directory per build, and in it one sub-pack per stage, named after it. `--build` takes the protocol version: 104 (beta-20100104, "Original"), 728 (beta-20100728) or 1013 (beta-20111013, "Academy").
 
-| Stage | Writes | What | Downloads (104 / 728 / 1013) |
-|---|---|---|---|
-| `areas` | `base/` | the client's named areas only | 1 / 1 / 1 MB |
-| `base` | `base/` | the named areas and every icon | 50 / 77 / 95 MB |
-| `avatar` | `avatar/` | the boy and girl actors with every clip, everything players wear, colour palettes, human NPC looks, emote icons | 89 / 93 / 128 MB |
-| `models` | `models/` | every mob, NPC and nano prefab with every clip | 399 / 435 / 588 MB |
-| `media` | `media/` | voice lines, story and hint clips, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
-| `world` | `world/` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
+| Stage | What | Downloads (104 / 728 / 1013) |
+|---|---|---|
+| `areas` | the client's named areas | 1 / 1 / 1 MB |
+| `icons` | every icon | 50 / 76 / 94 MB |
+| `avatar` | the boy and girl actors with every clip, everything players wear, colour palettes, human NPC looks, emote icons | 89 / 93 / 128 MB |
+| `models` | every mob, NPC and nano prefab with every clip | 399 / 435 / 588 MB |
+| `media` | voice lines, story and hint clips, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
+| `world` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
 
 Stages share archives, so all six together download each archive once: 473 / 967 / 702 MB in all. `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
 
@@ -44,7 +44,7 @@ Options:
 
 Each sub-pack is written beside its final place and swapped in when it's complete, so a program reading the packs never sees half of one, and a failed run leaves the old pack in place. Each has a `manifest.json` that says what's in it, which client archives it came from (`sources`, with their hashes) and a `fingerprint` that changes exactly when those, or the versions of ff-unpack and UnityPackFF that made it, do.
 
-`areas`, `base` and `media` take seconds. `avatar` and `models` export thousands of glTF files and `world` every map tile, which takes by far the longest; `--jobs` spreads those three over processes.
+`areas`, `icons` and `media` take seconds. `avatar` and `models` export thousands of glTF files and `world` every map tile, which takes by far the longest; `--jobs` spreads those three over processes.
 
 ### Where the files come from
 

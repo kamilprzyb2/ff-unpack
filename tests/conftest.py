@@ -22,7 +22,7 @@ import pytest
 from ff_unpack.builds import BUILDS, Build
 
 EXPECTED = Path(__file__).resolve().parent / "expected"
-ALL_STAGES = ["areas", "base", "avatar", "models", "media", "world"]
+ALL_STAGES = ["areas", "icons", "avatar", "models", "media", "world"]
 
 
 def pytest_addoption(parser):
@@ -47,18 +47,17 @@ class Packs:
         self.config = config
         self.root = root
         self.build = Build(proto)
-        self.made = {}  # sub-pack -> the stage that made it
+        self.made = set()
 
     def __call__(self, stage):
         if stage == "world" and not self.config.getoption("--world") and not self.config.getoption("--packs"):
             pytest.skip("the world stage is slow: run with --world")
-        subpack = "base" if stage == "areas" else stage
-        folder = self.root / self.build.name / subpack
+        folder = self.root / self.build.name / stage
         if self.config.getoption("--packs"):
             if not (folder / "manifest.json").exists():
-                pytest.skip(f"no {subpack}/ in --packs for {self.build.name}")
+                pytest.skip(f"no {stage}/ in --packs for {self.build.name}")
             return folder
-        if self.made.get(subpack) != stage:
+        if stage not in self.made:
             from ff_unpack.cli import main
 
             cache = os.environ.get("FF_UNPACK_CACHE")
@@ -67,7 +66,7 @@ class Packs:
             if cache:
                 args += ["--cache", cache]
             assert main(args) == 0
-            self.made[subpack] = stage
+            self.made.add(stage)
         return folder
 
 

@@ -7,7 +7,8 @@ The contract between ff-unpack and everything that reads its output. A reader st
 ```
 <packs>/
   beta-20100104/        one directory per client build (protocol 104)
-    base/               named areas and icons
+    areas/              named areas
+    icons/              icons
     avatar/             player characters
     models/             mobs, NPCs, nanos
     media/              voices and UI art
@@ -34,25 +35,23 @@ Every sub-pack has a `manifest.json` with these fields, followed by the sub-pack
 
 | Field | |
 |---|---|
-| `format` | `"ff-unpack/<sub-pack>"`, e.g. `"ff-unpack/base"` |
+| `format` | `"ff-unpack/<sub-pack>"`, e.g. `"ff-unpack/areas"` |
 | `format_version` | `1` |
 | `build` | `{"protocol": 104, "name": "beta-20100104", "uuid": "<launcher manifest uuid>"}` |
 | `ff_unpack` | ff-unpack's version |
 | `unitypackff` | `{"version", "commit", "dirty"}` of the UnityPackFF that exported it: `commit` only when it ran from a git checkout, `dirty: true` when that checkout had uncommitted changes (then the pack is not reproducible from the commit) |
 | `created` | when, UTC, ISO 8601 |
-| `stage` | the stage that wrote it (`areas` and `base` both write `base/`) |
 | `sources` | `{archive: sha256}` of every client archive read, including the ones read only because something pointed into them |
 | `fingerprint` | SHA-256 over `sources` and the exporter (`format_version`, ff-unpack's version, UnityPackFF's commit or version). It is the same whenever the same client files are unpacked by the same tools, and changes when either changes, so **this is what a reader compares** to tell whether what it derived from a pack (renders, caches) is still current. Don't hash `manifest.json` itself: `created` changes on every run |
 
-## base/
+## areas/
 
-Written by stage `areas` (data only, reads only TableData) or stage `base` (data and icons).
+Written by stage `areas`, which reads only the client's TableData.
 
 ```
-base/
+areas/
   manifest.json
   areas.json
-  icons/<name>.png
 ```
 
 **`areas.json`**: the client's named areas (TableData `worldname.asset`, `m_pWorldNameData`). The client names a position by the first rectangle that contains it. Empty rows are left out.
@@ -61,9 +60,17 @@ base/
 [{"index": 1, "name": "Candy Cove", "zone": "The Suburbs", "x": 4096.0, "y": 2560.0, "width": 512.0, "height": 512.0}, ...]
 ```
 
-`index` is the row in the client's table. `x`, `y`, `width` and `height` are in metres on the map: x east, y north. The world is a 16 × 16 grid of 512 m tiles, so tile `XX_YY` covers `[XX·512, XX·512 + 512) × [YY·512, YY·512 + 512)`. 104 and 728 have 93 areas, 1013 has 96.
+`index` is the row in the client's table. `x`, `y`, `width` and `height` are in metres on the map: x east, y north. The world is a 16 × 16 grid of 512 m tiles, so tile `XX_YY` covers `[XX·512, XX·512 + 512) × [YY·512, YY·512 + 512)`. 104 and 728 have 93 areas, 1013 has 96. Manifest field `areas`: how many.
 
-**`icons/`**: every texture in an `icons/` folder of the client, named as the client names it (`cosicon_00.png`, `nanoicon_01.png`, `mobicon_12.png`). The XDT's icon tables give an item, nano or NPC's icon number. Manifest field `icons`: the file names, or `null` if stage `areas` wrote the pack.
+## icons/
+
+```
+icons/
+  manifest.json
+  <name>.png
+```
+
+Every texture in an `icons/` folder of the client, named as the client names it (`cosicon_00.png`, `nanoicon_01.png`, `mobicon_12.png`). The XDT's icon tables give an item, nano or NPC's icon number. Manifest field `icons`: the file names.
 
 ## avatar/
 

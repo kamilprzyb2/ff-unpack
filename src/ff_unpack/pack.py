@@ -74,7 +74,7 @@ def write_file(path, data):
 
 
 class Staging:
-    """A sub-pack being written: `with Staging(out, build, "base") as s:`
+    """A sub-pack being written: `with Staging(out, build, "areas") as s:`
     write into s.dir, set s.sources and s.manifest; on success it replaces
     <out>/<build>/<subpack>/ in one rename, so a reader never sees half a
     pack. On failure the old pack stays."""

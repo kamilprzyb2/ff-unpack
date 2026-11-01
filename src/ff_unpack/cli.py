@@ -1,18 +1,18 @@
 """ff-unpack: unpack the FusionFall client into packs.
 
-    ff-unpack OUT --build 104 base avatar models media world
+    ff-unpack OUT --build 104 areas icons avatar models media world
     ff-unpack OUT --build 1013 areas
     ff-unpack --list-stages
 
-Downloads the client's archives for the build from the CDN its launcher
-manifest names (each checked against the manifest's SHA-256, and kept in
-the cache), and writes one sub-pack per stage to OUT/<build>/<sub-pack>/
+Downloads the client's archives for the build from the address its launcher
+manifest gives (each checked against the manifest's SHA-256, and kept in
+the cache), and writes one sub-pack per stage to OUT/<build>/<stage>/
 (PACK_FORMAT.md). Each sub-pack is written beside its final place and
 swapped in whole.
 
 Stages:
-  areas   base/: the client's named areas only (TableData, ~4 MB download)
-  base    base/: the named areas and the icons
+  areas   areas/: the client's named areas (reads only TableData)
+  icons   icons/: every icon
   avatar  avatar/: the boy and girl actors with every clip, everything
           players wear, colour palettes, human NPC looks, emote icons
   models  models/: every mob, NPC and nano prefab with every clip
@@ -46,7 +46,6 @@ def run_stage(client, out, stage, options):
     used = needed(client, archives)
     with Staging(out, client.build, stage.subpack) as staging:
         staging.sources = {a: client.sha256(a) for a in used}
-        staging.manifest["stage"] = stage.name
         summary = stage.run(client, staging, archives, options)
     client.log(f"  {summary} in {staging.final} ({time.monotonic() - start:.0f} s)")
 
@@ -57,7 +56,7 @@ def main(argv=None):
         epilog="\n\n".join(__doc__.split("\n\n")[3:]),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("out", nargs="?", help="where the packs go (OUT/<build>/<sub-pack>/)")
+    p.add_argument("out", nargs="?", help="where the packs go (OUT/<build>/<stage>/)")
     p.add_argument("stages", nargs="*", help="stages to run: " + ", ".join(STAGES))
     p.add_argument("--build", type=int, choices=sorted(BUILDS), default=104,
                    help="protocol version of the client build to unpack (default: 104)")

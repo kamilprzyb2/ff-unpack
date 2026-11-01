@@ -77,25 +77,24 @@ def prefab_files(folder, prefabs):
 def test_areas(packs, expected):
     folder = packs("areas")
     m = manifest(folder)
-    check_header(m, folder, packs, "base")
+    check_header(m, folder, packs, "areas")
     areas = json.loads((folder / "areas.json").read_text())
     assert m["areas"] == len(areas)
-    # with --packs, base/ may be stage base's, which has the icons too
-    assert (m["icons"] is None) == (m["stage"] == "areas")
+    assert m["sources"].keys() == {"TableData.resourceFile"}
     for a in areas:
         assert a["name"] and a["width"] > 0 and a["height"] > 0
         assert 0 <= a["x"] < 16 * 512 and 0 <= a["y"] < 16 * 512
     expected.check("areas", {"areas": len(areas)})
 
 
-def test_base(packs, expected):
-    folder = packs("base")
+def test_icons(packs, expected):
+    folder = packs("icons")
     m = manifest(folder)
-    check_header(m, folder, packs, "base")
-    icons = sorted(p.name for p in (folder / "icons").iterdir())
+    check_header(m, folder, packs, "icons")
+    icons = sorted(p.name for p in folder.iterdir() if p.name != "manifest.json")
     assert icons == sorted(m["icons"])
     prefixes = sorted({i.rsplit("_", 1)[0] for i in icons})
-    expected.check("base", {"areas": m["areas"], "icons": len(icons), "icon_families": prefixes})
+    expected.check("icons", {"icons": len(icons), "icon_families": prefixes})
 
 
 def test_avatar(packs, expected):

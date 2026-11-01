@@ -1,6 +1,6 @@
 {
  "beta-20100104": {
-  "base": [
+  "icons": [
    "FutureNano.resourceFile",
    "Icons.resourceFile",
    "Tutorial.resourceFile"
@@ -204,7 +204,7 @@
   ]
  },
  "beta-20100728": {
-  "base": [
+  "icons": [
    "FutureNano.resourceFile",
    "Icons.resourceFile",
    "Tutorial.resourceFile"
@@ -416,7 +416,7 @@
   ]
  },
  "beta-20111013": {
-  "base": [
+  "icons": [
    "Icons.resourceFile",
    "Nano_001.resourceFile",
    "Nano_002.resourceFile",

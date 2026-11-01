@@ -28,16 +28,16 @@ def test_fingerprint_ignores_order():
 
 def test_staging_swaps_in_whole(tmp_path):
     build = Build(104)
-    with Staging(tmp_path, build, "base") as s:
+    with Staging(tmp_path, build, "areas") as s:
         s.sources = {"TableData.resourceFile": "ab" * 32}
         s.manifest["areas"] = 1
         with open(s.path("areas.json"), "w") as f:
             f.write("[]")
         # nothing is in place until the block ends
-        assert not os.path.exists(tmp_path / "beta-20100104" / "base")
-    final = tmp_path / "beta-20100104" / "base"
+        assert not os.path.exists(tmp_path / "beta-20100104" / "areas")
+    final = tmp_path / "beta-20100104" / "areas"
     m = json.loads((final / "manifest.json").read_text())
-    assert m["format"] == "ff-unpack/base"
+    assert m["format"] == "ff-unpack/areas"
     assert m["format_version"] == 1
     assert m["build"] == {"protocol": 104, "name": "beta-20100104", "uuid": build.manifest["uuid"]}
     assert m["sources"] == {"TableData.resourceFile": "ab" * 32}
@@ -45,9 +45,9 @@ def test_staging_swaps_in_whole(tmp_path):
     assert m["areas"] == 1
     assert (final / "areas.json").read_text() == "[]"
     # only the pack is left: no work directories
-    assert os.listdir(tmp_path / "beta-20100104") == ["base"]
+    assert os.listdir(tmp_path / "beta-20100104") == ["areas"]
     # made again from the same input with the same tools: the same
-    with Staging(tmp_path, build, "base") as s:
+    with Staging(tmp_path, build, "areas") as s:
         s.sources = {"TableData.resourceFile": "ab" * 32}
     assert json.loads((final / "manifest.json").read_text())["fingerprint"] == m["fingerprint"]
 
