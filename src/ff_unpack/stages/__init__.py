@@ -14,11 +14,12 @@ from types import SimpleNamespace
 from .areas import Areas
 from .avatar import Avatar
 from .icons import Icons
+from .map import Map
 from .media import Media
 from .models import Models
 from .world import World
 
-STAGES = {s.name: s for s in (Areas, Icons, Avatar, Models, Media, World)}
+STAGES = {s.name: s for s in (Areas, Icons, Map, Avatar, Models, Media, World)}
 
 
 def options(jobs=2, tiles=None):

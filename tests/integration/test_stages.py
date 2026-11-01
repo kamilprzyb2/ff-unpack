@@ -97,6 +97,28 @@ def test_icons(packs, expected):
     expected.check("icons", {"icons": len(icons), "icon_families": prefixes})
 
 
+def test_map(packs, expected):
+    folder = packs("map")
+    m = manifest(folder)
+    check_header(m, folder, packs, "map")
+    images = sorted(p.name for p in folder.iterdir() if p.name != "manifest.json")
+    listed = {lv["file"] for lv in m["world"]}
+    listed |= {lv["file"] for z in m["zones"].values() for lv in z["levels"]}
+    listed |= {s["file"] for s in m["minimap"]["sheets"]} | {m["minimap"]["all"]}
+    assert images == sorted(listed)
+    # the sheets tile the map
+    assert sum(s["rect"][2] * s["rect"][3] for s in m["minimap"]["sheets"]) == m["size"] ** 2
+    for z in m["zones"].values():
+        x, y, w, h = z["rect"]
+        assert 0 <= x and x + w <= m["size"] and 0 <= y and y + h <= m["size"]
+    expected.check("map", {
+        "world": len(m["world"]),
+        "zones": {k: len(z["levels"]) for k, z in m["zones"].items()},
+        "sheets": len(m["minimap"]["sheets"]),
+        "images": len(images),
+    })
+
+
 def test_avatar(packs, expected):
     folder = packs("avatar")
     m = manifest(folder)
