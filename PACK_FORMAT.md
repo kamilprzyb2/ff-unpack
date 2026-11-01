@@ -267,3 +267,4 @@ Every change is listed below, additions too, with the ff-unpack version that fir
 |---|---|---|
 | 1 | 0.1.0 | first version: `areas/`, `icons/`, `avatar/`, `models/`, `media/`, `world/` |
 | 1 | 0.2.0 | new sub-pack `map/`: the world map and the minimap |
+| 1 | 0.3.0 | `avatar/` and `models/` `tables.json`: the XDT tables' string lists (names) and icon lists |
