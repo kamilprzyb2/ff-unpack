@@ -1,6 +1,6 @@
 # Pack format, version 1
 
-The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads; ff-unpack bumps `format_version` whenever the layout or the exported data changes.
+The contract between ff-unpack and everything that reads its output. A reader states which `format_version`s it reads. "Versions" at the end says when the version changes, and lists every change.
 
 ## Layout
 
@@ -259,6 +259,11 @@ Everything in `.glb` files is UnityPackFF's glTF export; its README describes it
 
 ## Versions
 
+`format_version` goes up when something a reader may rely on changes or goes away: a file or folder is moved or renamed, a field is removed or renamed, or a value changes its meaning, units or coordinates. It stays the same for additions: a new sub-pack, new files, new fields in a manifest or a JSON file. Readers ignore what they don't know.
+
+Every change is listed below, additions too, with the ff-unpack version that first writes it (the manifests' `ff_unpack`). A reader that needs an addition checks that version.
+
 | `format_version` | ff-unpack | Changes |
 |---|---|---|
-| 1 | 0.1.0 | first version |
+| 1 | 0.1.0 | first version: `areas/`, `icons/`, `avatar/`, `models/`, `media/`, `world/` |
+| 1 | 0.2.0 | new sub-pack `map/`: the world map and the minimap |
