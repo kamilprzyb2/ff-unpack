@@ -79,8 +79,8 @@ What a player character is made of, as the client builds it (`cnAvatarStatus`, `
 ```
 avatar/
   manifest.json
-  actor/m/default.glb         the boy actor (actor/m.kfm), no clips
-  actor/m/clips/<clip>.glb    each of its clips
+  actor/m/default.glb         the boy actor (actor/m.kfm), no animation clips
+  actor/m/clips/<clip>.glb    each of its animation clips
   actor/w/...                 the girl (actor/w.kfm)
   wear/<model>/<variant>.glb  everything players wear (wear/<model>.nif)
   wear/<model>/clips/<clip>.glb
@@ -95,7 +95,7 @@ avatar/
 **Prefab folders.** Each prefab (an actor or a worn model) has a folder of its own:
 
 - `<variant>.glb`: the model, once per set of textures the XDT puts on it. The variant is named by the set's first texture (`m_face_001_a`), or by both joined with `+` when that isn't enough to tell them apart. A prefab the XDT names no textures for has just `default.glb`, with its own.
-- `clips/<clip>.glb`: each clip on its own, with the same nodes in the same order as the model and no meshes, so it plays on any variant (match by node index). A track that never moves has one keyframe.
+- `clips/<clip>.glb`: each animation clip on its own, with the same nodes in the same order as the model and no meshes, so it plays on any variant (match by node index). A track that never moves has one keyframe.
 
 The manifest lists them: `actors: {"m": prefab, "w": prefab}` and `wear: {model: prefab}`, where a prefab is, for example
 
@@ -123,7 +123,7 @@ or, for a worn item the XDT gives textures,
 - the actor's root node has `extras.actor_bones`: the `ActorSkinCombiner.actorBones` list as node indices;
 - each worn item's skin has `extras.actor_bones = {"m": [...], "f": [...]}`, one entry per joint: the index into the boy's or the girl's list (−1 for none).
 
-**Height and build.** The `shape` and `height` clips animate `_FatFactor` on the materials. glTF can't animate material values, so these curves are in the animation's `extras.float_curves` (`{"<path>:<attribute>": {"input", "output", "node"}}`, accessors).
+**Height and build.** The `shape` and `height` animation clips animate `_FatFactor` on the materials. glTF can't animate material values, so these curves are in the animation's `extras.float_curves` (`{"<path>:<attribute>": {"input", "output", "node"}}`, accessors).
 
 **`textures.json`**: `{name: "shared/<file>.png"}` for every texture the XDT names for something players wear (including `m_skin`, `f_skin`, every eye colour of every face) and every texture a human NPC names. A character builder swaps them in by name. Manifest `missing_textures`: names the XDT uses that the client doesn't have.
 
@@ -150,7 +150,7 @@ models/
 
 Prefab folders and the manifest's prefab entries are as in `avatar/`; the manifest has `mob: {model: prefab}` and `nano: {model: prefab}`. A prefab held by several archives is taken from the shared ones first (World_shared, Freearea, TrainingGrounds, Tutorial, the nano archives) and then the per-tile DongResources. The XDT texture rule for these is the client's: on each renderer's first material only, a material named `…sub…` takes the second texture and one named `…main…` the first. NPC types 100 and up and human NPCs keep the prefab's own.
 
-The root node is where the client places the NPC. Every clip is exported, including `nif-default`, the bind pose the client never plays.
+The root node is where the client places the NPC. Every animation clip is exported, including `nif-default`, the bind pose the client never plays.
 
 **`textures.json`**: as in `avatar/`, for the textures the XDT names for mobs, NPCs, shinies, the bus and nanos.
 
@@ -161,10 +161,10 @@ The root node is where the client places the NPC. Every clip is exported, includ
 ```
 media/
   manifest.json
-  vo/<clip>.ogg          NPC voice lines (vo/)
-  story/<clip>.ogg       Dexter's lab and the tutorial (cc sound/, tut sound/)
-  hints/<clip>.ogg       Computress's first-use hints (fu sound/)
-  nano/<clip>.ogg        nano voices (sound/<…>_nan…)
+  vo/<name>.ogg          NPC voice lines (vo/)
+  story/<name>.ogg       Dexter's lab and the tutorial (cc sound/, tut sound/)
+  hints/<name>.ogg       Computress's first-use hints (fu sound/)
+  nano/<name>.ogg        nano voices (sound/<…>_nan…)
   ep/big_NN.png          Infected Zone banners by EP id
   ep/small_NN.png
   csbg/<zone>_<n>.png    character select backdrop panels
@@ -176,10 +176,10 @@ Manifest fields:
 | Field | |
 |---|---|
 | `voices` | `{speaker: [line, ...]}`: `vo/<speaker>_<line>.ogg` |
-| `story`, `hints` | clip names in `story/` and `hints/` |
-| `nanos` | `{prefab: {clip: [file, ...]}}`: the voice files each nano clip's `sound` animation events play (`AnimationEventHandler`), with `(RAND:a-b)` ranges expanded, files in `nano/` |
+| `story`, `hints` | file names in `story/` and `hints/` |
+| `nanos` | `{prefab: {animation clip: [file, ...]}}`: the voice files the `sound` events of each of a nano's animation clips play (`AnimationEventHandler`), with `(RAND:a-b)` ranges expanded, files in `nano/` |
 | `dismiss` | `{name: [file, ...]}`: the dismiss lines `NanoContainer` plays by the nano's display name (`dee_dee`, `prof._utonium`), files in `nano/` |
-| `nano_clips` | every file in `nano/`, including takes no event plays |
+| `nano_clips` | every voice file in `nano/`, including takes no event plays |
 | `ep` | `{"big": [id, ...], "small": [...]}` |
 | `backdrops` | `{zone: [panel, ...]}`: zones `future`, `suburbs`, `downtown`, `wilds`, `darklands`; panels 1–10, 542 × 477 each, shown side by side in order (`CnGuiCharSelection`) |
 | `help` | names in `help/` |
@@ -211,7 +211,7 @@ Manifest `tiles`: `{"XX_YY": {"terrain": bool, "attributes": {"size": 129, "pois
 
 Manifest `partial`: `true` when ff-unpack was asked for only some tiles (`--tiles`), `false` for a whole world. A reader that draws missing tiles as sea must not do so for a partial pack. ff-unpack never replaces a whole world pack with a partial one.
 
-**`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its clips (they loop) and scripts; the emitter's node places it. `<name>` is the prefab's name in lower case, and an emitter's `nifObject.object` gives it. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path or null}}`. `path` is null when no container lists the prefab (it sits in a tile's own data). When tiles hold copies of a prefab that differ, the first tile's (by name) is kept and the entry gets `"copies": n`: in 728 every tile has its own copy, compressed on its own, whose normals and texture coordinates differ slightly. The effects' particle systems aren't exported.
+**`effect/<name>.glb`**: each prefab an `EffectEmitterController` in the tiles names as its `nifObject` (the Infected Zones' barriers are `EPbarrier1`), exported once, with its animation clips (they loop) and scripts; the emitter's node places it. `<name>` is the prefab's name in lower case, and an emitter's `nifObject.object` gives it. Manifest `effects`: `{"<name>": {"file": "effect/<name>.glb", "prefab": its name, "path": its container path or null}}`. `path` is null when no container lists the prefab (it sits in a tile's own data). When tiles hold copies of a prefab that differ, the first tile's (by name) is kept and the entry gets `"copies": n`: in 728 every tile has its own copy, compressed on its own, whose normals and texture coordinates differ slightly. The effects' particle systems aren't exported.
 
 **`attr/<XX_YY>.bin`**: the tile's `MapAttributeTable`, 129 × 129 bytes, one per heightmap vertex (4 m apart), stored x-major: byte `x + z × 129`, with x east and z north from the tile's south-west corner. Flags: 8 = poison (standing there hurts), 16 = heal, 1 and 4 gate some items, values from 64 up mark roads and pavements. Poison overlays are drawn from this by whoever shows them.
 

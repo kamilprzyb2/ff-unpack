@@ -6,7 +6,7 @@ A prefab goes to a folder of its own, <kind>/<model>/:
     <variant>.glb       the model, once per set of textures the XDT puts on
                         it (named by the set's first texture), or default.glb
                         with the prefab's own when the XDT names none
-    clips/<clip>.glb    each clip on its own: the same nodes in the same
+    clips/<clip>.glb    each animation clip on its own: the same nodes in the same
                         order, no meshes, so it plays on any variant
 
 Images and mesh data go to the sub-pack's shared/ folder, named by their

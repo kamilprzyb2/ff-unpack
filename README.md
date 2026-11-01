@@ -29,9 +29,9 @@ This writes `packs/beta-20100104/areas/`, `packs/beta-20100104/icons/` and so on
 |---|---|---|
 | `areas` | the client's named areas | 1 / 1 / 1 MB |
 | `icons` | every icon | 50 / 76 / 94 MB |
-| `avatar` | the boy and girl actors with every clip, everything players wear, colour palettes, human NPC looks, emote icons | 89 / 93 / 128 MB |
-| `models` | every mob, NPC and nano prefab with every clip | 399 / 435 / 588 MB |
-| `media` | voice lines, story and hint clips, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
+| `avatar` | the boy and girl actors with every animation clip, everything players wear, colour palettes, human NPC looks, emote icons | 89 / 93 / 128 MB |
+| `models` | every mob, NPC and nano prefab with every animation clip | 399 / 435 / 588 MB |
+| `media` | voice lines, story and hint recordings, nano voices, Infected Zone banners, character select backdrops, the guide's pictures | 391 / 419 / 564 MB |
 | `world` | every map tile, attribute grids, skyboxes, music zones and tracks, the sun | 470 / 578 / 613 MB |
 
 Stages share archives, so all six together download each archive once: 473 / 967 / 702 MB in all. `areas` is the minimal stage: it reads only TableData and writes the area names, without extracting any models, textures or sounds.
@@ -71,7 +71,7 @@ In `src/ff_unpack/`:
 - `client.py`: the archive cache (download, check, unpack) and reading the files with UnityPackFF.
 - `pack.py`: staging a sub-pack and writing its manifest.
 - `stages/`: one module per sub-pack; `prefabs.py` exports prefabs for `avatar` and `models`.
-- `gltfclip.py`: cuts the constant tracks of clip files to one keyframe.
+- `gltfclip.py`: cuts the constant tracks of animation clip files to one keyframe.
 
 ### What goes where
 

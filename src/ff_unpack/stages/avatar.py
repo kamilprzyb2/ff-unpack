@@ -1,6 +1,6 @@
 """The `avatar` sub-pack: what a player character is built from.
 
-The boy and girl actors (actor/m.kfm, actor/w.kfm) with every clip and the
+The boy and girl actors (actor/m.kfm, actor/w.kfm) with every animation clip and the
 bone table worn items bind to; everything players wear (wear/*.nif) with
 the textures the XDT gives it, worn items with their skinned meshes only;
 the skin and hair colour palettes (male.bsd); the human NPCs' looks
@@ -155,5 +155,6 @@ class Avatar:
             failed=failed,
         )
         clips = sum(len(r.get("clips", {})) for r in actors.values())
-        return (f"2 actors ({clips} clips), {len(wear)} wearables, {len(textures)} textures "
+        return (f"2 actors ({clips} animation clips)"
+                f", {len(wear)} wearables, {len(textures)} textures "
                 f"({len(missing)} named but missing), {len(emotes)} emotes, {len(failed)} failed")

@@ -3,7 +3,7 @@
 The client loads NPCs, mobs, shinies and the bus as mob/<model>.kfm and
 nanos as nano/<model>.kfm (NpcMoveController, NanoMoveController), from
 whichever archive the area it's in brought along. Each is exported once,
-with every clip, once per set of textures the XDT puts on it; plus every
+with every animation clip, once per set of textures the XDT puts on it; plus every
 texture the XDT names for them, and the XDT tables that map NPCs and nanos
 to prefabs."""
 
@@ -86,5 +86,5 @@ class Models:
         staging.manifest.update(mob=prefabs["mob"], nano=prefabs["nano"], textures=len(textures),
                                 missing_textures=missing, failed=failed)
         clips = sum(len(r.get("clips", {})) for k in prefabs.values() for r in k.values())
-        return (f"{len(prefabs['mob'])} mob and {len(prefabs['nano'])} nano prefabs ({clips} clips), "
+        return (f"{len(prefabs['mob'])} mob and {len(prefabs['nano'])} nano prefabs ({clips} animation clips), "
                 f"{len(textures)} textures ({len(missing)} named but missing), {len(failed)} failed")

@@ -1,9 +1,9 @@
 """The `media` sub-pack: voices and UI art.
 
-    vo/<clip>.ogg       NPC voice lines (vo/<speaker>_<kind>NN.wav)
-    story/<clip>.ogg    Dexter's lab and the tutorial (cc sound/, tut sound/)
-    hints/<clip>.ogg    Computress's first-use hints (fu sound/)
-    nano/<clip>.ogg     nano voices: what the nano clips' animation events
+    vo/<name>.ogg       NPC voice lines (vo/<speaker>_<kind>NN.wav)
+    story/<name>.ogg    Dexter's lab and the tutorial (cc sound/, tut sound/)
+    hints/<name>.ogg    Computress's first-use hints (fu sound/)
+    nano/<name>.ogg     nano voices: what the nano's animation clips' events
                         play, and the dismiss lines (sound/<name>_NanDismiss0N)
     ep/big_NN.png       Infected Zone banners by EP id, and their small
     ep/small_NN.png     versions
@@ -65,7 +65,7 @@ def sounds(event):
 
 def nano_events(client, entry):
     """{clip: [voice file names]} of a nano prefab: the `sound` events of
-    its clips that play its voice (the `_Nan` ones)."""
+    its animation clips that play its voice (the `_Nan` ones)."""
     go = gameobject(client, entry)
     out = {}
     if go is None:
@@ -168,6 +168,7 @@ class Media:
             help=sorted(helps),
         )
         lines = sum(len(v) for v in voices.values())
-        return (f"{lines} voice lines of {len(voices)} speakers, {len(audio['nano'])} nano clips "
-                f"({len(events)} nanos with events), {len(audio['story'])} story and {len(audio['hints'])} hint clips, "
+        return (f"{lines} voice lines of {len(voices)} speakers, {len(audio['nano'])} nano voice files "
+                f"({len(events)} nanos with events), {len(audio['story'])} story and "
+                f"{len(audio['hints'])} hint recordings, "
                 f"{len(ep['big'])} EP banners, {len(backdrops)} backdrops, {len(helps)} help pictures")

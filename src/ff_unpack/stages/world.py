@@ -3,7 +3,7 @@
     tile/<XX_YY>.glb    every map tile scene (Map_XX_YY), exported whole by
                         UnityPackFF: props, terrain (shifts applied, splat and
                         control maps, lightmap and grass in the material's
-                        extras), animated props with their clips, lights,
+                        extras), animated props with their animation clips, lights,
                         each node's scripts and their fields (effects, the
                         Infected Zones' platforms and waypoints), and the
                         scene's fog and colours in its extras; at its world

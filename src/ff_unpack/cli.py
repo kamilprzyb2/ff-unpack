@@ -13,11 +13,13 @@ swapped in whole.
 Stages:
   areas   areas/: the client's named areas (reads only TableData)
   icons   icons/: every icon
-  avatar  avatar/: the boy and girl actors with every clip, everything
-          players wear, colour palettes, human NPC looks, emote icons
-  models  models/: every mob, NPC and nano prefab with every clip
-  media   media/: voice lines, story and hint clips, nano voices, banners,
-          character select backdrops, guide pictures
+  avatar  avatar/: the boy and girl actors with every animation clip,
+          everything players wear, colour palettes, human NPC looks,
+          emote icons
+  models  models/: every mob, NPC and nano prefab with every
+          animation clip
+  media   media/: voice lines, story and hint recordings, nano voices,
+          banners, character select backdrops, guide pictures
   world   world/: every map tile, attribute grids, skyboxes, music zones
           and tracks
 """
